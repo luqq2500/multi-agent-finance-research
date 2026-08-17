@@ -55,8 +55,9 @@ class FinancialMarketResearchAssistant:
         planner = self.base_llm.with_structured_output(ResearchTaskPlan)
         planner_message = [
             SystemMessage(content="You are a financial market research planner expert."
-                                  "Breakdown research query into decomposed research tasks using Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought."),
-            HumanMessage(content=f"Given user prompt '{user_prompt}', prepare a task decomposition plan.")
+                                  "Breakdown research query into decomposed research tasks using Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought."
+                                  "Each decomposed task should have targeted entities and topics"),
+            HumanMessage(content=f"Given user prompt '{user_prompt}', understand the user research query thoroughly. Prepare a task decomposition plan.")
         ]
         draft_plan: ResearchTaskPlan | BaseModel = planner.invoke(planner_message)
         self.session_messages.extend(planner_message)
@@ -65,7 +66,8 @@ class FinancialMarketResearchAssistant:
         plan_reflector = self.eval_llm.with_structured_output(ResearchTaskPlanReflection)
         plan_reflector_message = [
             SystemMessage(content="You are a financial market research plan reflect and audit expert."
-                                  "Use Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought to reflect, critique, and suggest for improvement for given research plan."),
+                                  "Use Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought to reflect, critique, and suggest for improvement for given research plan."
+                                  "Critique if tasks lacks targeted entities, topics or task."),
             HumanMessage(content=f"Given user prompt: {user_prompt}, draft plan: {draft_plan.model_dump_json()}"
                                  f"Prepare research task decomposition plan reflection.")
 
@@ -77,8 +79,8 @@ class FinancialMarketResearchAssistant:
         plan_reviser = self.base_llm.with_structured_output(ResearchTaskPlan)
         plan_reviser_message = [
             SystemMessage(content="You are a financial market research plan reviser expert."
-                                  "Understand thoroughly based on given reflection."
-                                  "Use Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought as guidance to improvise the research plan."),
+                                  "Understand given reflection thoroughly."
+                                  "Use the reflection and Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought as guidance to improvise the research plan."),
             HumanMessage(content="Given user prompt, draft plan, and plan reflection."
                                  f"User prompt: '{user_prompt}', draft plan: '{draft_plan.model_dump_json()}', plan reflection: {plan_reflection.model_dump_json()}"
                                  f"Prepare the revised and optimized plan.")
@@ -94,16 +96,16 @@ class FinancialMarketResearchAssistant:
         messages: list[BaseMessage] = state if state else [
             SystemMessage(
                 content=f"You are an expert in spawning research subagents."
-                        f"Use given research plan as guidance to spawn subagents."
-                        f"Each subagents must assigned with single task based on the research plan."
-                        f"For example, if research plan has 10 plans, subagents are expected to be 10, each assigned task based on each research task."
-                        f"Use given available tools to appropriately provide subagent necessary tools."
                         f"You are able to spawn up to {self.max_agents} subagents."
-                        f"Using subagent spawn quota efficiently to maximize better research task execution is necessary."),
+                        f"Using subagent spawn quota efficiently to maximize better research task execution is necessary."
+                        f"Each subagents must accurately assigned with research task based on the research plan, including targeted entities, topics, or tasks."
+                        f"Use given available tools to appropriately provide subagent necessary tools."
+            ),
             HumanMessage(
-                content=f"Given the task decomposition plan and available tools."
-                        f"The task decomposition plan: {research_plan.model_dump_json()}."
+                content=f"Given the research plan and available tools."
+                        f"Research plan: {research_plan.model_dump_json()}."
                         f"The available tools: '{', '.join(self.tool_map.keys())}'."
+                        f"Study the research plan thoroughly."
                         f"Prepare the subagent spawn plan. ")
         ]
         self.session_messages.extend(messages)

@@ -19,15 +19,24 @@ class SubAgentConfig(BaseModel):
     name: str = Field(description="Agent unique name")
     role: str = Field(description="Agent's role and expertise.")
     objective: str = Field(description="Agent's one primary objective.")
-    task: str = Field(description="Agent's one primary task.")
+    task: str = Field(description="Agent's primary tasks.")
     tools: list[str] = Field(description="Agent's tools list.")
 
     def get_system_instruction(self):
-        return (f"You are subagent named {self.name}."
-                f"Role and expertise: {self.role}."
-                f"Objective: {self.objective}."
-                f"Task: {self.task}."
-                f"Tools: {self.tools}")
+        return f"""
+        You are a subagent named {self.name}
+        
+        **Persona**: {self.role}
+        **Objective**: {self.objective}
+        **Research Tasks**: {self.task}
+        
+        **Reasoning Protocol:** Ground all rationale, reasoning, and analysis strictly on your assigned persona and objective.
+
+        **Tool Execution Protocol:**
+            - Always include the specific target entity, topic, or research task name explicitly in every tool call parameter based on assigned objective and task.
+            - Do not execute broad queries or pull data for external, unrelated entities, topic, and research tasks outside the scope of this task.
+        
+        """
 
     def get_task_instruction(self):
         return f"Task: {self.task}"

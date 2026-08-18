@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from langchain_core.tools import BaseTool
@@ -12,14 +15,18 @@ from model import ResearchTaskPlan, ResearchTaskPlanReflection, SubAgentsSpawn, 
 
 class FinancialMarketResearchAssistant:
     def __init__(self, base_llm: BaseChatModel, audit_llm: BaseChatModel | None, tools: list[BaseTool], max_agents: int=50):
+        self.research_query = None
         self.base_llm = base_llm
         self.audit_llm = audit_llm if audit_llm else base_llm
         self.tool_map = {tool.name: tool for tool in tools} if tools else None
+        self.available_tool_descriptions = self._get_available_tool_descriptions()
         self.max_agents = max_agents
         self.session_messages: list[BaseMessage] = []
 
     def run(self, research_query: str) -> FinancialMarketResearchAssistantResponse:
-        research_plan: ResearchTaskPlan = self._plan_reflect_revise_task(research_query)
+        self.research_query = research_query
+
+        research_plan: ResearchTaskPlan = self._plan_reflect_revise_task()
 
         subagent_spawn: SubAgentsSpawn = self._subagent_spawner(research_plan=research_plan)
 
@@ -64,10 +71,15 @@ class FinancialMarketResearchAssistant:
         final_report = self.base_llm.invoke([
             SystemMessage(content=RESEARCH_WRITER),
             HumanMessage(content=f"""
-                ### Synthesized Research
+                ***Contexts***
+                
+                **Synthesized Research**
                 {synthesized_response_content}
                 
-                **Task**: Write a research report. 
+                **Research Query**
+                {self.research_query}
+                
+                ***Task***: Write the final research report answering the user's research query. 
             """)
         ])
 
@@ -82,11 +94,18 @@ class FinancialMarketResearchAssistant:
             session_messages=self.session_messages
         )
 
-    def _plan_reflect_revise_task(self, user_prompt: str)->ResearchTaskPlan:
+    def _plan_reflect_revise_task(self)->ResearchTaskPlan:
         planner = self.base_llm.with_structured_output(ResearchTaskPlan)
         planner_message = [
             SystemMessage(content=RESEARCH_PLANNER),
-            HumanMessage(content=f"Given user prompt '{user_prompt}', prepare a task decomposition plan.")
+            HumanMessage(content=f"""
+            **Contexts**
+            - User Research Query: {self.research_query}
+            - Current Date: {self._get_current_date()}            
+            - Available Tools: {self.available_tool_descriptions}
+            
+            ***Task**: Prepare research task plan.
+            """)
         ]
         draft_plan: ResearchTaskPlan | BaseModel = planner.invoke(planner_message)
         self.session_messages.extend(planner_message)
@@ -97,9 +116,11 @@ class FinancialMarketResearchAssistant:
             SystemMessage(content=RESEARCH_PLAN_AUDITOR),
             HumanMessage(content=f"""
             **Context**:
-                - User Prompt: {user_prompt}
+                - User Research Query: {self.research_query}
+                - Current Date: {self._get_current_date()}
+                - Available Tools: {self.available_tool_descriptions}
                 - Research Plan: {draft_plan.model_dump_json()}
-
+            
             **Task**: Prepare research plan reflection.
             """)
         ]
@@ -112,9 +133,11 @@ class FinancialMarketResearchAssistant:
             SystemMessage(content=RESEARCH_PLAN_REVISER),
             HumanMessage(content=f"""
             **Context**:
-            - User Prompt: {user_prompt}
-            - Research Plan: {draft_plan.model_dump_json()}
-            - Research Plan Reflection: {plan_reflection.model_dump_json()}
+                - User Research Query: {self.research_query}
+                - Current Date: {self._get_current_date()}
+                - Available Tools: {self.available_tool_descriptions}
+                - Research Plan: {draft_plan.model_dump_json()}
+                - Research Plan Reflection: {plan_reflection.model_dump_json()}
             
             **Task**: Prepare revised research plan.
             """)
@@ -133,9 +156,15 @@ class FinancialMarketResearchAssistant:
             HumanMessage(
                 content=f"""
                 **Context**:
-                - Research Plan: {research_plan.model_dump_json()}
-                - Available tools: '{', '.join(self.tool_map.keys())}'
+                # User Research Query
+                    {self.research_query}
+                    
+                # Available Tools
+                    {self.available_tool_descriptions}
                 
+                # Research Plan
+                    {research_plan.model_dump_json()}
+
                 **Task**: Prepare subagent spawn plan.
                 """)
         ]
@@ -152,3 +181,18 @@ class FinancialMarketResearchAssistant:
             text_item = next((item for item in content if item.get('type') == 'text'), None)
             return text_item.get('text', '') if text_item else ''
         return str(content)
+
+    def _get_available_tool_descriptions(self)->str:
+        tool_descriptions: list[str] = []
+        for i, tool in enumerate(self.tool_map.values()):
+            tool_descriptions.append(f"""
+            # Tool: {tool.name}
+            # Description: {tool.description}
+            # Args: {tool.args}
+            """)
+        return "\n".join(tool_descriptions)
+
+    @staticmethod
+    def _get_current_date():
+        return datetime.now().date().isoformat()
+

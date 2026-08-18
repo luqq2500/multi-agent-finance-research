@@ -9,7 +9,7 @@ from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from model import FinancialMarketResearchAssistantResponse
-from tools import finance_web_search
+from tools import finance_web_search, research_tools
 from workflow import FinancialMarketResearchAssistant
 
 def diagnose(duration: int, response: FinancialMarketResearchAssistantResponse):
@@ -22,6 +22,7 @@ def diagnose(duration: int, response: FinancialMarketResearchAssistantResponse):
         print(f"{i+1}. Subagent {config.name}\n"
               f"    Objective: {config.objective}\n"
               f"    Task: {config.task}\n"
+              f"    Tools: {', '.join(config.tools)}"
               f"    Messages: {messages}\n")
 
 def save_response(response: FinancialMarketResearchAssistantResponse):
@@ -38,7 +39,7 @@ def main():
 
     base_llm = ChatGoogleGenerativeAI(model='gemini-3.5-flash')
     audit_llm = ChatGoogleGenerativeAI(model='gemini-3.6-flash')
-    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=audit_llm, tools=tools)
+    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=audit_llm, tools=research_tools)
 
     while True:
         start_time = time.time()

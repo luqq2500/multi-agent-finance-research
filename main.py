@@ -24,10 +24,6 @@ def diagnose(duration: int, response: FinancialMarketResearchAssistantResponse):
               f"    Task: {config.task}\n"
               f"    Messages: {messages}\n")
 
-    print(f'Session messages: ')
-    for i, message in enumerate(response.session_messages):
-        print(f"{i + 1}. {message.__class__.__name__}: {message.content}")
-
 def save_response(response: FinancialMarketResearchAssistantResponse):
     time = datetime.now().strftime("%Y%m%d_%H%M%S")
     directory = "diagnostics"
@@ -41,8 +37,8 @@ def main():
     tools.append(finance_web_search)
 
     base_llm = ChatGoogleGenerativeAI(model='gemini-3.5-flash')
-    eval_llm = ChatGoogleGenerativeAI(model='gemini-3.6-flash')
-    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=None, tools=tools)
+    audit_llm = ChatGoogleGenerativeAI(model='gemini-3.6-flash')
+    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=audit_llm, tools=tools)
 
     while True:
         start_time = time.time()

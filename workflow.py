@@ -4,7 +4,8 @@ from langchain_core.tools import BaseTool
 from pydantic import BaseModel
 
 from agents import SubAgent
-from instructions import RESEARCH_PLANNER, RESEARCH_PLAN_AUDITOR, RESEARCH_PLAN_REVISER, SUBAGENT_SPAWNER
+from instructions import RESEARCH_PLANNER, RESEARCH_PLAN_AUDITOR, RESEARCH_PLAN_REVISER, SUBAGENT_SPAWNER, \
+    LEAD_RESEARCHER, RESEARCH_WRITER
 from model import ResearchTaskPlan, ResearchTaskPlanReflection, SubAgentsSpawn, SubAgentConfig, \
     FinancialMarketResearchAssistantResponse
 
@@ -25,26 +26,55 @@ class FinancialMarketResearchAssistant:
         configs: list[SubAgentConfig] = subagent_spawn.subagent_configs
 
         subagent_messages: list[list[BaseMessage]] = []
-        subagent_contexts: list[str] = []
+        research_contexts: list[str] = []
         for config in configs:
             agent_tools = [self.tool_map[tool_name] for tool_name in config.tools]
             subagent = SubAgent(config=config, llm=self.base_llm, tools=agent_tools)
             response, messages = subagent.run()
             subagent_messages.append(messages)
-            subagent_contexts.append(f"Context from subagent {config.name}"
-                                     f"-Objective: {config.objective}"
-                                     f"-Task: {config.task}"
-                                     f"-Response: {response.content}")
+            research_contexts.append(f"""
+                ### Research Context from {config.name}
+                
+                ## Research Objective
+                {config.objective}
+                
+                ## Research Task
+                {config.task}
+                
+                ## Research Finding
+                {response.content}
+            """)
+
             self.session_messages.append(response)
 
+        joined_research_context = "\n\n".join(research_contexts)
         synthesized_response: AIMessage = self.base_llm.invoke([
-            SystemMessage(content="You are a financial market researcher expert. Perform research based on given research query and gathered context."),
-            HumanMessage(content=f"The research query: '{research_query}'."
-                         f"Gathered context: '{', '.join(subagent_contexts)}'")
+            SystemMessage(content=LEAD_RESEARCHER),
+            HumanMessage(content=f"""
+            **Research Query**
+            {research_query}
+
+            **Research Contexts**
+            {joined_research_context}
+            """)
         ])
 
+        synthesized_response_content = self._prepare_text_content(synthesized_response)
+
+        final_report = self.base_llm.invoke([
+            SystemMessage(content=RESEARCH_WRITER),
+            HumanMessage(content=f"""
+                ### Synthesized Research
+                {synthesized_response_content}
+                
+                **Task**: Write a research report. 
+            """)
+        ])
+
+        final_report_content = self._prepare_text_content(final_report)
+
         return FinancialMarketResearchAssistantResponse(
-            content_text=self._prepare_text_content(synthesized_response),
+            content_text=final_report_content,
             research_plan=research_plan,
             subagent_spawn=subagent_spawn,
             subagent_configs=subagent_spawn.subagent_configs,

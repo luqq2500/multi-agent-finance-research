@@ -4,6 +4,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage, ToolCall, ToolMessage
 from langchain_core.tools import BaseTool
 
+from instructions import FINALIZE_SUBAGENT_RESEARCH
 from model import SubAgentConfig, ResearchTaskPlan
 
 
@@ -17,29 +18,24 @@ class SubAgent:
 
     def run(self, state: Optional[list[BaseMessage]]=None):
         messages = self._set_state_messages(state)
-        loop_count = 0
 
-        while loop_count < self.max_loop:
-
-            loop_budget_warning = (self.max_loop - loop_count) == 1
-            if loop_budget_warning:
-                messages.append(HumanMessage(content='Warning. This is your last session. Do not call any tools. Finalize the next final response.'))
-
+        for _ in range(self.max_loop):
             response: AIMessage = self.llm.invoke(messages)
             messages.append(response)
 
-            if response.tool_calls:
-                tool_calls: list[ToolCall] = response.tool_calls
-                for tool_call in tool_calls:
-                    tool = self.tool_map[tool_call["name"]]
-                    tool_message: ToolMessage = tool.invoke(tool_call)
-                    messages.append(tool_message)
-            else:
+            if not response.tool_calls:
                 return response, messages
 
-            loop_count+=1
+            for tool_call in response.tool_calls:
+                tool = self.tool_map[tool_call["name"]]
+                tool_message: ToolMessage = tool.invoke(tool_call)
+                messages.append(tool_message)
 
-        raise TimeoutError(f"Agent failed to return finalize response after loop budget warning triggered. Max loop: {self.max_loop}, loop count: {loop_count}")
+        messages.append(HumanMessage(content=FINALIZE_SUBAGENT_RESEARCH))
+        final: AIMessage = self.base_llm.invoke(messages)
+        messages.append(final)
+
+        return final, messages
 
     def _set_state_messages(self, state: list[BaseMessage] | None) -> list[BaseMessage]:
         messages: list[BaseMessage] = []

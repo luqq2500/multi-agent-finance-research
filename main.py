@@ -4,6 +4,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 from dotenv import load_dotenv
+from langchain_core.messages import ToolMessage, AIMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -25,7 +26,7 @@ def diagnose(duration: int, response: FinancialMarketResearchAssistantResponse):
 
     print(f'Session messages: ')
     for i, message in enumerate(response.session_messages):
-        print(f"    {i + 1}. {message.__class__.__name__}: {message.content}")
+        print(f"{i + 1}. {message.__class__.__name__}: {message.content}")
 
 def save_response(response: FinancialMarketResearchAssistantResponse):
     time = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -39,8 +40,9 @@ def main():
     load_dotenv()
     tools.append(finance_web_search)
 
-    base_llm = ChatGoogleGenerativeAI(model='gemini-3.5-flash-lite')
-    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, eval_llm=None, tools=tools)
+    base_llm = ChatGoogleGenerativeAI(model='gemini-3.5-flash')
+    eval_llm = ChatGoogleGenerativeAI(model='gemini-3.6-flash')
+    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=None, tools=tools)
 
     while True:
         start_time = time.time()

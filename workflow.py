@@ -4,14 +4,15 @@ from langchain_core.tools import BaseTool
 from pydantic import BaseModel
 
 from agents import SubAgent
+from instructions import RESEARCH_PLANNER, RESEARCH_PLAN_AUDITOR, RESEARCH_PLAN_REVISER, SUBAGENT_SPAWNER
 from model import ResearchTaskPlan, ResearchTaskPlanReflection, SubAgentsSpawn, SubAgentConfig, \
     FinancialMarketResearchAssistantResponse
 
 
 class FinancialMarketResearchAssistant:
-    def __init__(self, base_llm: BaseChatModel, eval_llm: BaseChatModel|None, tools: list[BaseTool], max_agents: int=50):
+    def __init__(self, base_llm: BaseChatModel, audit_llm: BaseChatModel | None, tools: list[BaseTool], max_agents: int=50):
         self.base_llm = base_llm
-        self.eval_llm = eval_llm if eval_llm else base_llm
+        self.audit_llm = audit_llm if audit_llm else base_llm
         self.tool_map = {tool.name: tool for tool in tools} if tools else None
         self.max_agents = max_agents
         self.session_messages: list[BaseMessage] = []
@@ -54,23 +55,23 @@ class FinancialMarketResearchAssistant:
     def _plan_reflect_revise_task(self, user_prompt: str)->ResearchTaskPlan:
         planner = self.base_llm.with_structured_output(ResearchTaskPlan)
         planner_message = [
-            SystemMessage(content="You are a financial market research planner expert."
-                                  "Breakdown research query into decomposed research tasks using Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought."
-                                  "Each decomposed task should have targeted entities and topics"),
-            HumanMessage(content=f"Given user prompt '{user_prompt}', understand the user research query thoroughly. Prepare a task decomposition plan.")
+            SystemMessage(content=RESEARCH_PLANNER),
+            HumanMessage(content=f"Given user prompt '{user_prompt}', prepare a task decomposition plan.")
         ]
         draft_plan: ResearchTaskPlan | BaseModel = planner.invoke(planner_message)
         self.session_messages.extend(planner_message)
         self.session_messages.append(AIMessage(content=f"draft_plan: {draft_plan.model_dump_json()}"))
 
-        plan_reflector = self.eval_llm.with_structured_output(ResearchTaskPlanReflection)
+        plan_reflector = self.audit_llm.with_structured_output(ResearchTaskPlanReflection)
         plan_reflector_message = [
-            SystemMessage(content="You are a financial market research plan reflect and audit expert."
-                                  "Use Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought to reflect, critique, and suggest for improvement for given research plan."
-                                  "Critique if tasks lacks targeted entities, topics or task."),
-            HumanMessage(content=f"Given user prompt: {user_prompt}, draft plan: {draft_plan.model_dump_json()}"
-                                 f"Prepare research task decomposition plan reflection.")
+            SystemMessage(content=RESEARCH_PLAN_AUDITOR),
+            HumanMessage(content=f"""
+            **Context**:
+                - User Prompt: {user_prompt}
+                - Research Plan: {draft_plan.model_dump_json()}
 
+            **Task**: Prepare research plan reflection.
+            """)
         ]
         plan_reflection: ResearchTaskPlanReflection | BaseModel = plan_reflector.invoke(plan_reflector_message)
         self.session_messages.extend(plan_reflector_message)
@@ -78,12 +79,15 @@ class FinancialMarketResearchAssistant:
 
         plan_reviser = self.base_llm.with_structured_output(ResearchTaskPlan)
         plan_reviser_message = [
-            SystemMessage(content="You are a financial market research plan reviser expert."
-                                  "Understand given reflection thoroughly."
-                                  "Use the reflection and Mutually Exclusive, Collectively Exhaustive framework alongside Financial Chain-of-Thought as guidance to improvise the research plan."),
-            HumanMessage(content="Given user prompt, draft plan, and plan reflection."
-                                 f"User prompt: '{user_prompt}', draft plan: '{draft_plan.model_dump_json()}', plan reflection: {plan_reflection.model_dump_json()}"
-                                 f"Prepare the revised and optimized plan.")
+            SystemMessage(content=RESEARCH_PLAN_REVISER),
+            HumanMessage(content=f"""
+            **Context**:
+            - User Prompt: {user_prompt}
+            - Research Plan: {draft_plan.model_dump_json()}
+            - Research Plan Reflection: {plan_reflection.model_dump_json()}
+            
+            **Task**: Prepare revised research plan.
+            """)
         ]
         revised_plan: ResearchTaskPlan | BaseModel = plan_reviser.invoke(plan_reviser_message)
         self.session_messages.extend(plan_reviser_message)
@@ -95,18 +99,15 @@ class FinancialMarketResearchAssistant:
         spawner = self.base_llm.with_structured_output(SubAgentsSpawn)
         messages: list[BaseMessage] = state if state else [
             SystemMessage(
-                content=f"You are an expert in spawning research subagents."
-                        f"You are able to spawn up to {self.max_agents} subagents."
-                        f"Using subagent spawn quota efficiently to maximize better research task execution is necessary."
-                        f"Each subagents must accurately assigned with research task based on the research plan, including targeted entities, topics, or tasks."
-                        f"Use given available tools to appropriately provide subagent necessary tools."
-            ),
+                content=SUBAGENT_SPAWNER),
             HumanMessage(
-                content=f"Given the research plan and available tools."
-                        f"Research plan: {research_plan.model_dump_json()}."
-                        f"The available tools: '{', '.join(self.tool_map.keys())}'."
-                        f"Study the research plan thoroughly."
-                        f"Prepare the subagent spawn plan. ")
+                content=f"""
+                **Context**:
+                - Research Plan: {research_plan.model_dump_json()}
+                - Available tools: '{', '.join(self.tool_map.keys())}'
+                
+                **Task**: Prepare subagent spawn plan.
+                """)
         ]
         self.session_messages.extend(messages)
         subagent_spawn: SubAgentsSpawn | BaseModel = spawner.invoke(messages)

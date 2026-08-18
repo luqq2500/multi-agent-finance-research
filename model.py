@@ -3,46 +3,58 @@ from dataclasses import dataclass
 from langchain_core.messages import BaseMessage
 from pydantic import BaseModel, Field
 
+from instructions import SUBAGENT_RESEARCHER
+
+
 class ResearchTask(BaseModel):
-    rationale: str = Field(description="Rationale")
-    research_task: str = Field(description="Unit task")
+    rationale: str = Field(description="Brief explanation of decomposition strategy")
+    research_task: str = Field(description="Specific, actionable research task with entities and objectives")
 
 class ResearchTaskPlan(BaseModel):
-    rationale: str = Field(description="Rationale")
-    tasks: list[ResearchTask] = Field(description="list of research tasks")
+    rationale: str = Field(description="Brief explanation of decomposition strategy")
+    tasks: list[ResearchTask] = Field(description="A list of specific, actionable research tasks with entities and objectives")
 
 class ResearchTaskPlanReflection(BaseModel):
-    critique: str = Field(description="Critique")
-    required_improvement: str = Field(description="Required improvement")
+    critique: str = Field(description="Assessment of plan quality")
+    required_improvement: str = Field(description="Structured list of specific weaknesses and improvement areas")
 
 class SubAgentConfig(BaseModel):
     name: str = Field(description="Agent unique name")
-    role: str = Field(description="Agent's role and expertise.")
-    objective: str = Field(description="Agent's one primary objective.")
-    task: str = Field(description="Agent's primary tasks.")
-    tools: list[str] = Field(description="Agent's tools list.")
+    role: str = Field(description="Agent's role, persona, and expertise.")
+    objective: str = Field(description="Specific, measurable objective for this agent")
+    task: str = Field(description="Detailed, actionable task description")
+    tools: list[str] = Field(description="Tool name list.")
 
     def get_system_instruction(self):
         return f"""
-        You are a subagent named {self.name}
+        ### **Role**
+        ***You are a specialized {self.name} agent.***
         
-        **Persona**: {self.role}
-        **Objective**: {self.objective}
-        **Research Tasks**: {self.task}
+        Your domain expertise and research focus:
+        {self.role}
         
-        **Reasoning Protocol:** Ground all rationale, reasoning, and analysis strictly on your assigned persona and objective.
-
-        **Tool Execution Protocol:**
-            - Always include the specific target entity, topic, or research task name explicitly in every tool call parameter based on assigned objective and task.
-            - Do not execute broad queries or pull data for external, unrelated entities, topic, and research tasks outside the scope of this task.
+        ### **Objective**
+        ***{self.objective}***
         
+        This is your singular research goal. All investigation, tool use, and reasoning must target this objective.
+        
+        ### **Research Task**
+        ***{self.task}***
+        
+        This task defines the scope, specific entities, metrics, and success criteria for your research.
+        
+        {SUBAGENT_RESEARCHER}
         """
 
     def get_task_instruction(self):
-        return f"Task: {self.task}"
+        return f"""
+        ### **Objective**: {self.objective}
+        
+        ### **Research Task**: {self.task}
+        """
 
 class SubAgentsSpawn(BaseModel):
-    rationale: str = Field(description="Rationale")
+    rationale: str = Field(description="High-level strategy for agent spawning and tool allocation")
     subagent_configs: list[SubAgentConfig] = Field(description="Subagent configurations. Subagent spawn limit is up to 50 subagents.")
 
 @dataclass

@@ -2,6 +2,8 @@ import os
 import time
 from datetime import datetime
 
+from InquirerPy import inquirer
+from InquirerPy.validator import NumberValidator
 from dotenv import load_dotenv
 from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,13 +11,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from model import FinancialMarketResearchAssistantResponse, ResearchReport
 from tools import finance_web_search, research_tools
 from workflow import FinancialMarketResearchAssistant
-
-def save_response1(response: FinancialMarketResearchAssistantResponse):
-    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
-    directory = "diagnostics"
-    os.makedirs(directory, exist_ok=True)
-    with open(f"{directory}/diagnostic-{current_datetime}.txt", "w", encoding="utf-8") as file:
-        file.write(str(response))
 
 def save_response(response: FinancialMarketResearchAssistantResponse):
     # Create a unique folder name using the current timestamp
@@ -45,9 +40,48 @@ def main():
     load_dotenv()
     tools.append(finance_web_search)
 
-    base_llm = ChatGoogleGenerativeAI(model='gemini-3.5-flash-lite')
-    audit_llm = ChatGoogleGenerativeAI(model='gemini-3.6-flash')
-    assistant = FinancialMarketResearchAssistant(base_llm=base_llm, audit_llm=audit_llm, tools=research_tools, plan_research_max_loop=5, write_report_max_loop=5)
+    models = {
+        'gemini-3.5-flash-lite': lambda: ChatGoogleGenerativeAI(model='gemini-3.5-flash-lite'),
+        'gemini-3.5-flash': lambda: ChatGoogleGenerativeAI(model='gemini-3.5-flash'),
+        'gemini-3.6-flash': lambda: ChatGoogleGenerativeAI(model='gemini-3.6-flash'),
+        'gemini-3.7-flash': lambda: ChatGoogleGenerativeAI(model='gemini-3.7-flash'),
+    }
+
+    select_base_model = inquirer.select(
+        message="Select base model: ",
+        choices=list(models.keys()),
+    ).execute()
+
+    select_audit_model = inquirer.select(
+        message="Select audit model: ",
+        choices=list(models.keys()),
+    ).execute()
+
+    select_plan_reflect_max_loop = inquirer.number(
+        message="Enter plan-reflect max loop:",
+        default=None,
+        min_allowed=1,
+        max_allowed=100,
+        validate=NumberValidator(float_allowed=False),
+    ).execute()
+
+    base_model = models[select_base_model]()
+    audit_model = models[select_audit_model]()
+    max_loop = int(select_plan_reflect_max_loop)
+
+    try:
+        base_model.invoke(input="ping")
+        audit_model.invoke(input="ping")
+    except Exception as e:
+        raise RuntimeError(f"Model failed to invoke: {e}")
+
+    assistant = FinancialMarketResearchAssistant(
+        base_llm=base_model,
+        audit_llm=audit_model,
+        tools=research_tools,
+        plan_research_max_loop=max_loop,
+        write_report_max_loop=max_loop
+    )
 
     while True:
         start_time = time.time()

@@ -30,7 +30,7 @@ class FinancialMarketResearchAssistant:
         subagent_messages: list[list[BaseMessage]] = []
         subagent_contexts: list[str] = []
         for task in tasks.get_list_of_research_task():
-            agent_tools = [self.tool_map[tool_name] for tool_name in task.get_list_of_tools()]
+            agent_tools = [self.tool_map[tool_name] for tool_name in task.get_list_of_tools() if tool_name in self.tool_map]
 
             subagent = SubAgent(llm=self.base_llm, tools=agent_tools)
 
@@ -59,6 +59,8 @@ class FinancialMarketResearchAssistant:
         research_report, writer_msg, report_auditor_msg = self.write_research_report(synthesized_text)
 
         return FinancialMarketResearchAssistantResponse(
+            base_llm=self.get_chat_model_id(self.base_llm),
+            audit_llm=self.get_chat_model_id(self.audit_llm),
             research_query=self.research_query,
             research_tasks=tasks,
             research_planner_messages=planner_msg,
@@ -112,7 +114,7 @@ class FinancialMarketResearchAssistant:
         for loop in range(self.write_report_max_loop):
             report = writer.invoke(writer_msg)
             writer_msg.append(AIMessage(content=report.get_message()))
-            auditor_msg.append(HumanMessage(content=f"\n### Research Query\n{self.research_query}\n### Synthesized Research\n{synthesized_research}" + report.get_message()))
+            auditor_msg.append(HumanMessage(content=f"\n### Research Query\n{self.research_query}\n### Synthesized Research\n{synthesized_research}" + f"### Draft Report Under Review\n{report.get_message()}"))
 
             audit: ResearchReportAudit = auditor.invoke(auditor_msg)
             if not audit.require_improvement:
@@ -151,3 +153,18 @@ class FinancialMarketResearchAssistant:
     def _get_current_date():
         return datetime.now().date().isoformat()
 
+    @staticmethod
+    def get_chat_model_id(model: BaseChatModel) -> str:
+        # 1. Check for standard variants across most providers
+        for attr in ["model_name", "model", "model_id", "deployment_name"]:
+            if hasattr(model, attr):
+                val = getattr(model, attr)
+                if isinstance(val, str) and val:
+                    return val
+
+        # 2. Check if it's tucked inside provider configuration objects
+        if hasattr(model, "client") and hasattr(model.client, "model"):
+            return model.client.model
+
+        # 3. Last resort fallback to class name
+        return model.__class__.__name__

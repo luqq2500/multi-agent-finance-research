@@ -32,7 +32,6 @@ class ResearchTask(ResearchModel):
         **Task**
         {self.task}
         
-                
         **Success Criteria**
         {get_list_str_messages(self.success_criteria)}
         
@@ -131,6 +130,8 @@ class ResearchReportAudit(ResearchModel):
 
 @dataclass
 class FinancialMarketResearchAssistantResponse:
+    base_llm: str
+    audit_llm: str
     research_query: str
     research_tasks: ResearchTasks
     research_planner_messages: list[BaseMessage]

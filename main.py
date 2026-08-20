@@ -12,6 +12,9 @@ from model import FinancialMarketResearchAssistantResponse, ResearchReport, Rese
 from tools import finance_web_search, research_tools
 from workflow import FinancialMarketResearchAssistant
 
+from datetime import datetime
+import os
+
 def save_response(response: FinancialMarketResearchAssistantResponse):
     # Create a unique folder name using the current timestamp
     folder_time = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -26,13 +29,18 @@ def save_response(response: FinancialMarketResearchAssistantResponse):
     )
 
     # Loop through each field, using the field name as the filename
+    md_file_fields = ["research_report", "research_synthesis"]
+
     for field_name, field_value in fields.items():
-        filename = f"{field_name}.txt"
+        # Dynamic extension matching your condition
+        extension = "md" if field_name in md_file_fields else "txt"
+        filename = f"{field_name}.{extension}"
         filepath = os.path.join(directory, filename)
 
         with open(filepath, "w", encoding="utf-8") as file:
             # Safely convert lists, dicts, or objects to string format
             file.write(str(field_value))
+
 
 
 def main():

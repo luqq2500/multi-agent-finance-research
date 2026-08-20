@@ -34,7 +34,7 @@ class ResearchAssistantConfig:
 
     def get_available_tools_manifest(self) -> str:
         tool_descriptions: list[str] = []
-        for i, tool in enumerate(self.tool_map.values()):
+        for i, tool in enumerate(self.tools):
             tool_descriptions.append(f"""
             # Tool: {tool.name}
             # Description: {tool.description}

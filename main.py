@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from langchain_core.tools import BaseTool
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from model import FinancialMarketResearchAssistantResponse, ResearchReport
+from model import FinancialMarketResearchAssistantResponse, ResearchReport, ResearchAssistantConfig
 from tools import finance_web_search, research_tools
 from workflow import FinancialMarketResearchAssistant
 
@@ -52,8 +52,8 @@ def main():
         choices=list(models.keys()),
     ).execute()
 
-    select_audit_model = inquirer.select(
-        message="Select audit model: ",
+    select_upgrade_model = inquirer.select(
+        message="Select upgrade model: ",
         choices=list(models.keys()),
     ).execute()
 
@@ -65,8 +65,16 @@ def main():
         validate=NumberValidator(float_allowed=False),
     ).execute()
 
-    select_subagent_max_loop = inquirer.number(
-        message="Enter subagent max loop:",
+    set_max_subagents = inquirer.number(
+        message="Enter subagents budget:",
+        default=None,
+        min_allowed=1,
+        max_allowed=100,
+        validate=NumberValidator(float_allowed=False),
+    ).execute()
+
+    set_subagent_max_loop = inquirer.number(
+        message="Enter subagent loop budget:",
         default=None,
         min_allowed=1,
         max_allowed=100,
@@ -75,22 +83,26 @@ def main():
 
     try:
         base_model = models[select_base_model]()
-        audit_model = models[select_audit_model]()
+        upgrade_model = models[select_upgrade_model]()
         max_plan_reflect_loop = int(select_plan_reflect_max_loop)
-        max_subagent_loop = int(select_subagent_max_loop)
+        max_subagents = int(set_max_subagents)
+        max_subagent_loop = int(set_subagent_max_loop)
         base_model.invoke(input="ping")
-        audit_model.invoke(input="ping")
+        upgrade_model.invoke(input="ping")
     except Exception as e:
         raise RuntimeError(f"Model failed to invoke: {e}")
 
-    assistant = FinancialMarketResearchAssistant(
+    config = ResearchAssistantConfig(
         base_llm=base_model,
-        audit_llm=audit_model,
-        tools=research_tools,
+        upgrade_llm=upgrade_model,
+        tools=tools,
         max_planner_loop=max_plan_reflect_loop,
-        max_agents_loop=max_subagent_loop,
+        max_agents=max_subagents,
+        max_agent_loop=max_subagent_loop,
         max_writer_loop=max_plan_reflect_loop
     )
+
+    assistant = FinancialMarketResearchAssistant(config)
 
     while True:
         start_time = time.time()
@@ -100,7 +112,7 @@ def main():
         response: FinancialMarketResearchAssistantResponse = assistant.run(user_prompt)
         end_time = time.time()
 
-        print(f'Response: \n{response.research_report}')
+        print(f'\nResponse: \n{response.research_report}')
 
         duration = end_time - start_time
         print(f'Response time: {duration} seconds')

@@ -1,0 +1,6 @@
+### Max Subagents
+50
+### Max Loop
+Planner: 5
+Subagent: 10
+Writer: 5

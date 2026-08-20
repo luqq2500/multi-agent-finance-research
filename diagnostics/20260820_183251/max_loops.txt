@@ -1,0 +1,4 @@
+# Max Loops
+Planner: 5
+Subagent: 20
+Writer: 5

@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
 from instructions import SUBAGENT_RESEARCHER
@@ -11,8 +13,76 @@ def get_list_str_messages(items: list[str]) -> str:
 
 class ResearchModel(BaseModel, ABC):
     @abstractmethod
-    def get_message(self)->str:
+    def get_manifest(self)->str:
         pass
+
+@dataclass
+class ResearchAssistantConfig:
+    base_llm: BaseChatModel
+    upgrade_llm: BaseChatModel
+    tools: list[BaseTool]
+    max_planner_loop: int
+    max_agents: int
+    max_agent_loop: int
+    max_writer_loop: int
+
+    def get_base_model_id(self):
+        return self.get_chat_model_id(self.base_llm)
+
+    def get_upgrade_model_id(self):
+        return self.get_chat_model_id(self.upgrade_llm)
+
+    def get_available_tools_manifest(self) -> str:
+        tool_descriptions: list[str] = []
+        for i, tool in enumerate(self.tool_map.values()):
+            tool_descriptions.append(f"""
+            # Tool: {tool.name}
+            # Description: {tool.description}
+            # Args: {tool.args}
+            """)
+
+        tool_descriptions_join = "\n".join(tool_descriptions)
+        return f"""
+        ### AVAILABLE RESEARCH TOOLS
+
+        {tool_descriptions_join}
+        """
+
+    def get_planner_budget_manifest(self):
+        return f"""
+        ***LOOP BUDGET***: {self.max_planner_loop}
+        """
+
+    def get_subagent_budget_manifest(self):
+        return f"""       
+        ***NUMBER OF SUBAGENTS BUDGET: *** {self.max_agents}
+
+        ***EACH SUBAGENT LOOP BUDGET*** {self.max_agent_loop}
+        
+        ***TOTAL TOOL-CALL CAPACITY ACROSS THE WHOLE PLAN (subagents x loop budget — an outer ceiling, NOT a target to fill):*** {self.max_agents*self.max_agent_loop}
+        """
+
+    def get_writer_budget_manifest(self):
+        return f"""
+        ***LOOP BUDGET: ***{self.max_writer_loop} 
+        """
+
+
+    @staticmethod
+    def get_chat_model_id(model: BaseChatModel) -> str:
+        # 1. Check for standard variants across most providers
+        for attr in ["model_name", "model", "model_id", "deployment_name"]:
+            if hasattr(model, attr):
+                val = getattr(model, attr)
+                if isinstance(val, str) and val:
+                    return val
+
+        # 2. Check if it's tucked inside provider configuration objects
+        if hasattr(model, "client") and hasattr(model.client, "model"):
+            return model.client.model
+
+        # 3. Last resort fallback to class name
+        return model.__class__.__name__
 
 class ResearchTask(ResearchModel):
     task: str = Field(description="**One** specific research task — a single scope of investigation for a single isolated agent. "
@@ -24,32 +94,27 @@ class ResearchTask(ResearchModel):
     tool_use_strategy: list[str] = Field(description="A step-by-step blueprint of tool use, detailing how the selected tools will be utilized, including exact arguments and parameters.")
     task_boundary: list[str] = Field(description="Strict out-of-scope boundaries. Explicitly lists what should NOT be researched or done during this task.")
 
-    def get_message(self) ->str:
+    def get_manifest(self) ->str:
         return (
         f"""
-        # Research Task Specification
+        ### RESEARCH TASK
                 
-        **Task**
-        {self.task}
+        **Task**: {self.task}
         
-        **Success Criteria**
+        **Success Criteria**: 
         {get_list_str_messages(self.success_criteria)}
         
-        **Required Expertise**
-        {self.required_expertise}
+        **Required Expertise**: {self.required_expertise}
         
-        **Tools**
+        **Tools**:
         {get_list_str_messages(self.tools)}
         
-        **Tool Use Strategy**
+        **Tool Use Strategy**:
         {get_list_str_messages(self.tool_use_strategy)}
         
-        **Task Boundary**
+        **Task Boundary**:
         {get_list_str_messages(self.task_boundary)}        
         """)
-
-    def get_tasks(self)->str:
-        return get_list_str_messages(self.task)
 
     def get_list_of_tools(self)->list[str]:
         return self.tools
@@ -57,10 +122,10 @@ class ResearchTask(ResearchModel):
 class ResearchTasks(ResearchModel):
     research_tasks: list[ResearchTask] = Field(description="Research tasks")
 
-    def get_message(self) ->str:
-        research_tasks = "\n".join(f"## Research Task {i+1}\n {task.get_message()}" for i, task in enumerate(self.research_tasks))
+    def get_manifest(self) ->str:
+        research_tasks = "\n".join(f"## Research Task {i+1}\n {task.get_manifest()}" for i, task in enumerate(self.research_tasks))
         return f"""
-        ### List of Research Tasks
+        ### RESEARCH TASKS
         
         {research_tasks}
         """
@@ -74,18 +139,28 @@ class ResearchTasksCritique(ResearchModel):
     improvement: list[str] = Field(description="Actionable, specific steps or modifications needed to resolve the issues identified in the critique.")
     require_improvement: bool = Field(description="Set to True if any critical issues or necessary improvements are found. Set to False only if the tasks are completely ready to execute.")
 
-    def get_message(self) ->str:
+    def get_manifest(self) ->str:
         return f"""
-        ### Research Tasks Critique
+        ### RESEARCH_TASK_CRITIQUE
         
-        ## Reflection
+        ***Reflection***:
         {get_list_str_messages(self.reflection)}
         
-        ## Critiques
+        ***Critiques***:
         {get_list_str_messages(self.critique)}
         
-        ## Improvement
+        ***Improvement Required***:
         {get_list_str_messages(self.improvement)}
+        """
+
+class ResearchSynthesis(ResearchModel):
+    research_synthesis: str = Field(description="Complete research synthesis")
+
+    def get_manifest(self) ->str:
+        return f"""
+        ### RESEARCH_SYNTHESIS
+        
+        {self.research_synthesis}
         """
 
 class ResearchReport(ResearchModel):
@@ -93,9 +168,9 @@ class ResearchReport(ResearchModel):
     outlines: str = Field(description="Outlines of the research report.")
     report: str = Field(description="Complete content of the research report.")
 
-    def get_message(self)->str:
+    def get_manifest(self)->str:
         return f"""
-        ### Research Report Details
+        ### RESEARCH REPORT
         
         ## Title
         {self.title}
@@ -111,34 +186,32 @@ class ResearchReportAudit(ResearchModel):
     reflection: list[str] = Field(description="List of research report audit reflection.")
     critique: list[str] = Field(description="List of research report critique.")
     require_improvement: bool = Field(description="Set to True if any critical issues or necessary improvements are found. Set to False only if the tasks are completely ready to execute.")
-    improvement_suggestions: list[str] = Field(description="Actionable, specific steps or modifications needed to resolve the issues identified in the critique.")
+    improvements_required: list[str] = Field(description="Actionable, specific steps or modifications needed to resolve the issues identified in the critique.")
 
-    def get_message(self) -> str:
+    def get_manifest(self) -> str:
         return f"""
-        ### Research Report Audit
+        ### RESEARCH REPORT AUDIT
         
-        ## Reflection
+        ***Reflection***:
         {get_list_str_messages(self.reflection)}
         
-        ## Critique
+        ***Critique***:
         {get_list_str_messages(self.critique)}
         
-        ## Improvement Suggestions
-        {get_list_str_messages(self.improvement_suggestions)}
+        ***Improvement Required***:
+        {get_list_str_messages(self.improvements_required)}
         """
 
 
 @dataclass
 class FinancialMarketResearchAssistantResponse:
-    base_llm: str
-    audit_llm: str
-    max_loops: str
+    configurations: ResearchAssistantConfig
     research_query: str
-    research_tasks: str
+    research_tasks: list[ResearchTask]
     planner_messages: list[BaseMessage]
-    planauditor_messages: list[BaseMessage]
+    plan_auditor_messages: list[BaseMessage]
     subagent_messages: list[list[BaseMessage]]
-    synthesized_research: str
+    research_synthesis: str
     writer_messages: list[BaseMessage]
-    writerauditor_messages: list[BaseMessage]
+    writer_auditor_messages: list[BaseMessage]
     research_report: str

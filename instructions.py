@@ -120,8 +120,8 @@ rationale, before listing tasks. Choose on these grounds:
 - **Evidence asymmetry.** If one entity is likely far better disclosed than
   another, split by entity so the thin side fails visibly in its own task
   instead of being crowded out inside a shared one.
-- **Budget.** See the sizing rule below — the axis that produces tasks fitting
-  the budget wins over the axis that produces elegant-looking ones.
+- **Budget.** See the sizing rules below — the axis that produces tasks
+  fitting the budget wins over the axis that produces elegant-looking ones.
 
 An aspect-axis task covering both entities is NOT forbidden cross-agent work,
 provided a single agent can retrieve both sides itself. Only tasks that consume
@@ -134,7 +134,7 @@ entity axis to weigh — start from a single task by default.
 - Split further only if the facets pull from genuinely different document
   classes (e.g. quantitative fundamentals vs. qualitative management
   commentary vs. governance disclosures), or the combined retrieval-target
-  count exceeds one subagent's budget — apply the sizing rule below exactly
+  count exceeds one subagent's budget — apply the sizing rules below exactly
   as you would for a multi-entity query.
 - When you do split, the axis is by facet/topic, or by named source class
   where the query names its own source (a query asking for "earnings
@@ -188,6 +188,31 @@ manifest — read it before sizing tasks, and reserve some of it for dead ends.
 - Prefer more tasks of the right size over fewer oversized ones, within the
   task cap. Fewer tasks is not the objective; complete tasks are.
 
+### Respect the Subagent Count Ceiling
+Your context states a NUMBER OF SUBAGENTS BUDGET and a TOTAL TOOL-CALL
+CAPACITY figure. Each task you write becomes exactly one subagent — task
+count and subagent count are the same number in this pipeline.
+- Never write more tasks than the stated subagent budget allows. This is a
+  hard ceiling, not a target. Most queries need far fewer tasks than the
+  ceiling permits, and the ceiling existing is not a reason to use more of
+  it — task count still follows the query's actual entities, aspects, and
+  document classes, per the axis and single-entity rules above. Do not add
+  tasks to approach the ceiling, and do not fragment a query to approach it.
+- If a query's genuine scope — the entities, aspects, and document classes it
+  actually implies — would require more tasks than the ceiling allows even at
+  reasonable per-task granularity, do not silently drop coverage and do not
+  silently produce an over-ceiling plan. Scope down explicitly: state in the
+  rationale which entities or aspects you are covering within the ceiling and
+  which you are declining and why — the same pattern you already use to
+  declare a LOW-YIELD or DERIVED item out of scope.
+- The TOTAL TOOL-CALL CAPACITY figure (subagent ceiling times per-subagent
+  loop budget) is your outer bound on total plan depth, not a target either.
+  Use it in the other direction too: if your planned tasks would use only a
+  small fraction of it for a query the user asked to be researched
+  "in-depth" or "extensively," that is the same under-scoping the step-budget
+  rule above already asks you to avoid — just checked at the whole-plan level
+  instead of per task.
+
 ### Do Not Plan Cross-Agent Work
 Each task is executed by an agent that sees ONLY its own task — never the plan,
 the other agents, or their findings. Therefore:
@@ -227,6 +252,8 @@ You MUST:
   for a single-entity query, state that the single-entity default applies and
   justify any split.
 - State each task's retrieval-target count against the step budget.
+- State the plan's total task count against the subagent count ceiling, and
+  explicitly declare any scope excluded to stay within it.
 - Write every task in plain evidence-category language, even when a named
   framework motivated the decomposition.
 
@@ -236,6 +263,8 @@ You MUST NOT:
 - Include a task no available tool can answer.
 - Include a task that depends on another task's output.
 - Include a task whose targets exceed what one agent can reach in its budget.
+- Write more tasks than the stated subagent count ceiling allows, without
+  explicitly scoping down and declaring what was excluded.
 - Decompose by named investor, analyst, or firm framework/methodology, or
   instruct a subagent to apply one, calculate a valuation under one, or form
   a thesis under one.
@@ -271,9 +300,15 @@ You MUST NOT:
 7. Count retrieval targets per task against the step budget. Split anything
    oversized; for a single entity, split only for a document-class or budget
    reason, never to manufacture a comparison shape.
-8. Confirm that answering all tasks answers the user's question, and that the
+8. Count the plan's total task count against the subagent count ceiling. If
+   it exceeds the ceiling, cut to the highest-value tasks and declare what
+   was excluded and why. If it uses only a small fraction of the total
+   tool-call capacity for a query calling for depth, add facets or source
+   classes the query genuinely calls for.
+9. Confirm that answering all tasks answers the user's question, and that the
    rationale names every declined or substituted item, including any
-   framework application or derived metric deferred to the lead researcher.
+   framework application or derived metric deferred to the lead researcher,
+   and any scope excluded to respect the subagent ceiling.
 """
 
 # ---------------------------------------------------------------------------
@@ -343,6 +378,24 @@ target.
 - Say nothing if tasks are correctly sized. Do not push for splitting as a
   reflex.
 
+### Subagent Ceiling Check
+Every task becomes exactly one subagent. Compare the plan's total task count
+against the stated NUMBER OF SUBAGENTS BUDGET.
+- Flag a plan whose task count exceeds the budget. CRITICAL — this plan cannot
+  run as written, independent of how well-sized any individual task is.
+- If the query's genuine scope exceeds the ceiling, check that the plan says
+  so explicitly and states what was scoped out and why — not silently
+  truncated, and not silently left over-ceiling.
+- This check is independent of the Budget-Granularity Check above: that one
+  sizes individual tasks against their own tool-call budget; this one sizes
+  the whole plan's task COUNT against the subagent ceiling. A plan can pass
+  one and fail the other — check both.
+- Do not flag a plan for using well under the ceiling. Fewer tasks than the
+  ceiling allows is normal and correct for most queries; only flag actual
+  over-ceiling task counts here. (Gross under-use of the TOTAL TOOL-CALL
+  CAPACITY figure for an in-depth query is the Budget-Granularity Check's
+  concern, not this one's.)
+
 ### Decomposition-Axis Check
 The planner must state its decomposition axis (by entity, by aspect, by cell)
 and justify it for a multi-entity query — or state that the single-entity
@@ -396,9 +449,9 @@ You MUST:
 - Quote or point to the specific task you criticise.
 - State the root cause, not just the symptom.
 - Rank findings by severity; mark infeasible, LOW-YIELD, DERIVED-with-no-
-  source, cross-agent, framework-as-axis (including any task naming an
-  investor, analyst, or firm anywhere in its text), and over-budget tasks
-  CRITICAL.
+  source, over-ceiling, cross-agent, framework-as-axis (including any task
+  naming an investor, analyst, or firm anywhere in its text), and over-budget
+  tasks CRITICAL.
 
 You MUST NOT:
 - Manufacture criticism. If a dimension is sound, say so and move on.
@@ -406,7 +459,7 @@ You MUST NOT:
 - Rewrite the plan. Describe the problem and the direction of the fix.
 
 ### Process
-1. Read the tool manifest.
+1. Read the tool manifest and the stated subagent budgets.
 2. Map what each task covers.
 3. Run every requested fact through the Disclosure-Locus Blueprint and the
    Derivation Check → CRITICAL on unreachable, LOW-YIELD, or a DERIVED metric
@@ -414,14 +467,16 @@ You MUST NOT:
    named.
 4. Count retrieval targets per task against the step budget → CRITICAL on
    over-budget.
-5. Check the declared decomposition axis against retrieval reality, including
+5. Count the plan's total task count against the subagent count ceiling →
+   CRITICAL on over-ceiling, checking that any excluded scope is declared.
+6. Check the declared decomposition axis against retrieval reality, including
    whether any task decomposes by named framework or methodology instead of
    evidence category, or names an investor/analyst/firm anywhere in task text
    (CRITICAL either way), and whether a single-entity query was needlessly
    fragmented.
-6. Check for cross-agent dependencies → CRITICAL on failure.
-7. Check comparability, time scope, undefined terms, coverage, overlap.
-8. Compile findings ordered by severity, after the STRENGTHS line.
+7. Check for cross-agent dependencies → CRITICAL on failure.
+8. Check comparability, time scope, undefined terms, coverage, overlap.
+9. Compile findings ordered by severity, after the STRENGTHS line.
 """
 
 SUBAGENT_RESEARCHER = """

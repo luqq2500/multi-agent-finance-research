@@ -1,0 +1,47 @@
+### Macroeconomic and Market Data Across Cycle Periods
+
+#### 1. Macroeconomic Indicators
+
+*   **CPI / PCE Inflation Rates:**
+    *   **2007–2009:** Year-over-year Consumer Price Index (CPI) inflation was approximately 2.8% in 2007 and 3.8% in 2008, dropping to a deflationary rate of approximately –0.4% in 2009 [src: https://www.investopedia.com/inflation-rate-by-year-7253832].
+    *   **2020:** The annual CPI increase was estimated around 1.4% [src: https://www.investopedia.com/inflation-rate-by-year-7253832].
+    *   **2022–2023:** Year-over-year inflation surged to roughly 6.5% in 2022 [src: https://www.investopedia.com/inflation-rate-by-year-7253832]. By August 2023, the Bureau of Labor Statistics (BLS) reported a year-over-year All-Items CPI rise of 3.7% [src: https://www.forbes.com/sites/andrewdepietro/2023/09/13/analysis-of-consumer-price-index-cpi-latest-release].
+
+*   **Federal Reserve Policy Rates:**
+    *   **2007–2009:** The federal funds target rate peaked at 5.25% in 2007, dropped to a 0%–0.25% range by late 2008, and remained there through 2009 [src: https://en.wikipedia.org/wiki/Federal_funds_rate].
+    *   **2020:** The target rate was lowered to 0%–0.25% in March 2020 and stayed at that floor throughout the year [src: https://en.wikipedia.org/wiki/Federal_funds_rate].
+    *   **2022–2023:** Monetary tightening brought the target rate to 4.25%–4.50% by December 2022, 4.75%–5.00% by mid-2023, and 5.25%–5.50% by December 2023 [src: https://en.wikipedia.org/wiki/Federal_funds_rate].
+
+*   **Real GDP Growth and Unemployment Rates:**
+    *   **2007–2009:** Employment fell more rapidly during the December 2007 – June 2009 recession than in prior recessions [src: https://www.bls.gov/spotlight/2012/recession].
+    *   **2020:** The onset of the COVID-19 pandemic caused real GDP to contract at an annualized rate of 5.1% in Q1 2020 and 31.2% in Q2 2020 [src: https://www.cbpp.org/research/economy/tracking-the-post-great-recession-economy].
+    *   **2022–2023:** In Q1 2022, real GDP dropped 1.4% (while remaining 3.6% higher than a year earlier) [src: https://www.cbpp.org/research/economy/tracking-the-post-great-recession-economy]. In 2023, real GDP registered a 2.1% gain in Q2 and accelerated to an annualized rate of 4.9% in Q3 [src: https://home.treasury.gov/news/press-releases/jy1850]. The unemployment rate stood at 3.6% at the end of 2022 and was projected to rise to 5.1% by the end of 2023 [src: https://www.cbo.gov/publication/58957].
+
+*   **Credit Condition Metrics:**
+    *   The ICE BofA US High Yield Index Option-Adjusted Spread (OAS) reached a record low of 2.41% in June 2007 [src: https://tradingeconomics.com/united-states/bofa-merrill-lynch-us-high-yield-option-adjusted-spread-fed-data.html].
+    *   During the 2007–2009 financial crisis, the OAS surged to a record high of 21.82% in December 2008 [src: https://tradingeconomics.com/united-states/bofa-merrill-lynch-us-high-yield-option-adjusted-spread-fed-data.html].
+
+---
+
+#### 2. S&P 500 Market Valuations, Performance, and Volatility
+
+*   **2007–2009 Transitions:** Implied volatility on S&P 500 options surged in 2007, with the VIX entering a pattern of higher highs and higher lows prior to the market peak [src: https://finance.yahoo.com/markets/stocks/articles/equities-spot-market-peak-rally-060000830.html]. Prior to the financial crisis, price-to-earnings, price-to-book, and price-to-sales ratios reached record highs [src: https://finance.yahoo.com/markets/stocks/articles/equities-spot-market-peak-rally-060000830.html]. Following the March 2009 bottom, the S&P 500 market capitalization grew from 41% of U.S. GDP to 212% [src: https://finance.yahoo.com/markets/stocks/articles/equities-spot-market-peak-rally-060000830.html].
+*   **2022 Performance:** The S&P 500 and long-term Treasuries both lost more than 20% from peak to valley, marking an unusual year of negative returns [src: https://finance.yahoo.com/news/turning-point-coming-p-500-110500151.html, src: https://finance.yahoo.com/news/2022-was-an-unusual-year-for-the-stock-market-%F0%9F%93%89-134223630.html].
+*   **Post-2022 / 2023 Performance:** Following the 2022 inflation scare, the S&P 500 achieved three consecutive years of 15%-plus total returns [src: https://finance.yahoo.com/news/turning-point-coming-p-500-110500151.html].
+
+---
+
+### Evidence Gaps
+
+*   NOT FOUND :: Specific monthly Treasury yield levels (e.g., 2-year and 10-year constant maturity rates) for each individual month in 2007–2009, 2020, and 2022–2023 :: tried: `economic_data_search`
+*   NOT FOUND :: Specific quantitative S&P 500 annual returns, daily trading volumes, and volatility metrics for the 2007–2009 macroeconomic transition :: tried: `market_data_search` with query `SP500 historical returns trading volume volatility valuation metrics 2007 2008 2009`
+*   NOT FOUND :: Exact annual S&P 500 trading volumes and specific volatility metrics/VIX levels for the years 2020, 2022, and 2023 :: tried: `market_data_search` with query `SP500 return trading volume volatility 2020 2022 2023`
+*   NOT FOUND :: Detailed analyst consensus measures and specific published market valuation ratios (other than qualitative mentions of P/E, P/B, P/S records and CAPE ratios) for 2020 and 2022–2023 :: tried: `market_data_search` with queries covering valuations and metrics across 2007–2009, 2020, and 2022–2023
+
+---
+
+### Interpretation and Framework Limitations
+
+*Note: In accordance with task boundaries, the empirical records above present factual data points but do not apply Ray Dalio's economic cycles framework or synthesize forward-looking investment rules.*
+
+To fully map these historical metrics onto Ray Dalio’s framework (which evaluates cycles through debt deleveragings, productivity, short-term debt cycles/business cycles, and long-term debt cycles), additional data points would be required. Specifically, comprehensive monthly Treasury yield curves, explicit credit growth aggregates, private debt-to-income ratios, and granular daily volatility and volume metrics across 2020 and 2022–2023 are missing. Without these inputs, any attempt to classify specific structural shifts into distinct "beautiful deleveraging" or "inflationary recession" templates using the framework would rely on unverified assumptions rather than exhaustive data.

@@ -1,0 +1,71 @@
+### JPMorgan Chase Strategy and FY2024 Performance
+
+#### Core Segments and Strategic Focus
+* **Consumer & Community Banking (CCB):** Served over 84 million consumers and 7 million small business clients in FY2024, focusing on deepening customer relationships through digital channels and branch networks [src: https://www.jpmorganchase.com/ir/annual-report/2024/ar-ceo-letter-marianne-lake].
+* **Corporate & Investment Bank (CIB):** Prioritized delivering a united Commercial & Investment Bank to offer a more cohesive organization aligning capabilities for global clients [src: https://www.jpmorganchase.com/ir/annual-report/2024/ar-ceo-letter-petno-rohrbaugh].
+* **Commercial Banking (CB):** [src: https://www.sec.gov/Archives/edgar/data/19617/000095012303002985/y83354e10vk.htm]
+* **Asset & Wealth Management (AWM):** [src: https://www.sec.gov/Archives/edgar/data/19617/000095012303002985/y83354e10vk.htm]
+
+#### Headline Financial Results
+* **Firmwide Net Revenue:** $42.8 billion reported (Managed Revenue: $43.7 billion) [src: https://www.sec.gov/Archives/edgar/data/19617/000001961725000040/a4q24erfex992supplement.htm].
+* **Firmwide ROE:** 18% [src: https://www.sec.gov/Archives/edgar/data/19617/000001961725000040/a4q24erfex992supplement.htm].
+* **Firmwide ROTCE:** 22% [src: https://www.sec.gov/Archives/edgar/data/19617/000001961725000040/a4q24erfex992supplement.htm].
+
+#### Capital Allocation and Strategic Investments
+* Capital allocation and investments included modernizing technology infrastructure, data centers, cloud migration, traditional AI/machine learning, and Generative AI to improve software engineering, customer support, personalization, and fraud prevention [src: https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/events/2024/jpmc-2024-investor-day/opening-remarks.pdf].
+* Strategic investments encompassed branch expansion and digital capabilities; over 41 million customers visited a Chase branch in 2024 [src: https://www.jpmorganchase.com/ir/annual-report/2024/ar-ceo-letter-marianne-lake].
+
+#### Management Commentary and Competitive Positioning
+* CCB maintained the #1 retail deposit share and #1 primary bank ranking for U.S. small businesses [src: https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/annualreport-2024.pdf?_sp=e1275528-a1ea-4365-9229-fd19e89b45ef].
+* CIB investment banking fees rose 49% year-over-year, securing a #1 ranking for Global Investment Banking fees with a 9.3% wallet share [src: https://www.sec.gov/Archives/edgar/data/19617/000001961725000040/a4q24erfex992supplement.htm].
+
+---
+
+### Citigroup Strategy and FY2024 Performance
+
+#### Core Operating Segments and Structural Transformation
+* **Core Operating Segments:** Services, Markets, Banking, Wealth, and U.S. Personal Banking (USPB) [src: https://www.sec.gov/Archives/edgar/data/831001/000141057825001455/c-20250715xex99d1.htm].
+* **Structural Transformation:** Initiatives featured organizational flattening and executing international consumer business divestitures (including sales in Poland and Mexico/Banamex) to streamline operations and resolve legacy regulatory and reporting complexities [src: https://finance.yahoo.com/markets/stocks/articles/citigroup-stock-multi-high-why-135500426.html, https://www.wsj.com/finance/banking/how-citigroup-can-get-to-the-next-level-469464ba].
+
+#### Headline Financial Results
+* **Consolidated Net Revenues:** $89.6 billion [src: https://www.sec.gov/Archives/edgar/data/831001/000119312507038505/d10k.htm].
+* **Consolidated Net Income from Continuing Operations:** $21.2 billion [src: https://www.sec.gov/Archives/edgar/data/831001/000119312507038505/d10k.htm].
+
+#### Strategic Targets, Capital Management, and Investments
+* Outlined a multi-year return target trajectory toward a 10% to 11% ROTCE alongside a $30 billion share repurchase authorization framework [src: https://finance.yahoo.com/markets/stocks/articles/citigroup-targets-higher-returns-unveils-121003161.html].
+* Core investment areas emphasized technology modernization, automation, artificial intelligence (AI), liquidity management, and blockchain-based digital assets/tokenized deposit networks [src: https://finance.yahoo.com/markets/crypto/articles/citigroup-reshapes-leadership-pushes-tokenized-200558277.html, https://finance.yahoo.com/markets/stocks/articles/citigroup-targets-higher-returns-unveils-121003161.html].
+
+#### Management Commentary
+* CEO Jane Fraser noted that the bank "rebuilt the engine" by flattening the organizational structure, resolving tangled risk and reporting systems, and accelerating execution across core businesses [src: https://finance.yahoo.com/markets/stocks/articles/citigroup-targets-higher-returns-unveils-121003161.html, https://www.wsj.com/finance/banking/how-citigroup-can-get-to-the-next-level-469464ba].
+
+---
+
+### Morgan Stanley Strategy and FY2024 Performance
+
+#### Core Segments and Strategic Contributions
+* **Core Segments:** Institutional Securities, Wealth Management, and Investment Management [src: https://www.sec.gov/Archives/edgar/data/895421/000119312518060831/d500533d10k.htm].
+* **Strategic Contributions:** Wealth Management and Investment Management held $7.9 trillion in combined client assets at the end of 2024, contributing toward the firm's long-term goal of $10 trillion [src: https://www.sec.gov/Archives/edgar/data/895421/000114036125012302/ny20039620x1_def14a.htm].
+
+#### Headline Financial Results
+* **Net Revenues:** $61.8 billion [src: https://www.sec.gov/Archives/edgar/data/895421/000089542125000079/a4q24msearningsrelease.htm].
+* **Earnings Per Share (EPS):** $7.95 [src: https://www.sec.gov/Archives/edgar/data/895421/000089542125000079/a4q24msearningsrelease.htm].
+* **Return on Tangible Common Equity (ROTCE):** 18.8% [src: https://www.sec.gov/Archives/edgar/data/895421/000089542125000079/a4q24msearningsrelease.htm].
+
+#### Strategic Priorities and Wealth Management Inflows
+* Generated $18.0 billion in long-term net flows for the full year 2024 [src: https://www.sec.gov/Archives/edgar/data/895421/000089542125000079/a4q24msearningsrelease.htm].
+* Strategic trajectory is characterized by consistent and durable earnings, strong capital accretion, and business momentum across all segments [src: https://www.sec.gov/Archives/edgar/data/895421/000114036125012302/ny20039620x1_def14a.htm].
+
+---
+
+### Evidence Gaps
+* NOT FOUND :: Disclosed headline segment financial results (segment net revenue and segment net income) for each core segment of JPMorgan Chase for FY2024 :: tried: sec_filing_search; company_ir_search; finance_web_search
+* NOT FOUND :: Disclosed headline FY 2024 segment net revenue and net income for each of Citigroup's individual core operating segments (Services, Markets, Banking, Wealth, U.S. Personal Banking) :: tried: sec_filing_search
+* NOT FOUND :: Disclosed headline segment financial results (e.g., FY2024 net revenue and net income for Institutional Securities, Wealth Management, and Investment Management individually) for Morgan Stanley :: tried: sec_filing_search
+* NOT FOUND :: Detailed management commentary on strategic positioning, capital return policies, and specific segment growth drivers extracted from full FY2024 earnings transcripts for Morgan Stanley :: tried: sec_filing_search and earnings release snippets
+
+---
+
+### Analyst Interpretation & What Would Close Gaps
+Management strategies across all three institutions focus heavily on balance sheet fortification, technology modernization (including AI and cloud initiatives), and strategic simplification (such as Citi's international divestitures and Morgan Stanley's focus on fee-based asset accumulation toward $10 trillion). 
+
+However, because granular segment-level net revenue and net income breakdowns were absent from the retrieved primary filing extracts, exact individual segment contributions cannot be independently verified here. Closing these gaps requires extracting complete tables directly from full-length, un-abbreviated SEC 10-K filings and full-year earnings transcripts for each respective bank.

@@ -1,0 +1,57 @@
+## Executive Summary
+
+The available evidence is severely restricted for NVIDIA, with annual revenue retrieved for only one of the requested years (FY 2025), while AMD coverage is complete from FY 2018 through FY 2025. Because NVIDIA historical revenue data for FY 2018 through FY 2024 was not found, a comprehensive multi-year comparative analysis between the two companies cannot be performed.
+
+- NVIDIA reported an annual revenue of $130.5 billion for FY 2025 [1].
+- NVIDIA annual revenue for FY 2018 through FY 2024 was NOT FOUND.
+- AMD annual revenue grew from $6,475 million in FY 2018 to $34,614 million in FY 2025 [2, 6].
+- AMD experienced a temporary revenue contraction in FY 2023, dropping to $22,680 million from $23,601 million in FY 2022, before recovering in FY 2024 and FY 2025 [4, 5, 6].
+
+## Key Findings & Comparative Analysis
+
+### NVIDIA Annual Revenue
+Coverage for NVIDIA annual revenue spans only FY 2025 within the requested timeframe. NVIDIA reported an annual revenue of $130.5 billion for FY 2025 [1]. Annual figures for FY 2018, FY 2019, FY 2020, FY 2021, FY 2022, FY 2023, and FY 2024 were NOT FOUND.
+
+### AMD Annual Revenue
+Coverage for AMD annual revenue is complete from FY 2018 through FY 2025. AMD reported continuous growth across most of the period, punctuated by a single year-over-year decline in FY 2023.
+
+| Fiscal Year | AMD Reported Annual Revenue | Source Citation |
+| :--- | :--- | :--- |
+| FY 2018 | $6,475 million (ended December 29, 2018) | [2] |
+| FY 2019 | $6,731 million | [3] |
+| FY 2020 | $9,763 million | [3] |
+| FY 2021 | $16,434 million (ended December 25, 2021) | [3] |
+| FY 2022 | $23,601 million (ended December 31, 2022) | [4] |
+| FY 2023 | $22,680 million (ended December 30, 2023) | [4] |
+| FY 2024 | $25,785 million (ended December 28, 2024) | [5] |
+| FY 2025 | $34,614 million (ended December 27, 2025) | [6] |
+
+## Evidence Gaps & Data Limitations
+
+The research query requested in-depth data from FY 2018 through FY 2025 for both NVIDIA and AMD. Significant gaps limit this objective:
+
+- NVIDIA annual revenue for FY 2018 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2019 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2020 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2021 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2022 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2023 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+- NVIDIA annual revenue for FY 2024 is NOT FOUND (tried: sec_filing_search for NVIDIA 10-K filings; company_ir_search for NVIDIA annual results).
+
+## Analytical Interpretation & Synthesis
+
+The NVIDIA data is heavily incomplete, restricting any multi-year comparative analysis for NVIDIA on its own or against AMD within the requested timeframe. Closing the gaps for NVIDIA requires targeted searches across individual historical NVIDIA Form 10-K filings or older investor relations archives for FY 2018 through FY 2024.
+
+## References
+
+[1] Title not supplied — Author not stated — http://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2025
+
+[2] Title not supplied — Author not stated — https://www.sec.gov/Archives/edgar/data/2488/000000248819000011/amd-12292018x10k.htm
+
+[3] Title not supplied — Author not stated — https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm
+
+[4] Title not supplied — Author not stated — https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm
+
+[5] Title not supplied — Author not stated — https://ir.amd.com/news-events/press-releases/detail/1236/amd-reports-fourth-quarter-and-full-year-2024-financial-results
+
+[6] Title not supplied — Author not stated — https://ir.amd.com/news-events/press-releases/detail/1276/amd-reports-fourth-quarter-and-full-year-2025-financial-results

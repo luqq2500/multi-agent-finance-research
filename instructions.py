@@ -78,6 +78,31 @@ The available retrieval tools, with descriptions, are in your context.
 
 """ + DISCLOSURE_LOCUS_BLUEPRINT + """
 
+### Do Not Request Derived Metrics No Pipeline Stage May Calculate
+Every stage after you — subagents, the lead researcher/synthesist, and the
+report writer — is independently forbidden from computing a new metric from
+raw inputs. None of them may perform arithmetic on what they retrieve. A
+success criterion asking for a metric that is inherently computed rather than
+directly disclosed (ROIC, IRR, blended or trailing growth rates not stated as
+such, "X relative to Y" trends implying a ratio, any return or efficiency
+metric combining multiple line items) therefore has no stage anywhere in this
+pipeline authorized to produce it — not just the subagent.
+- Before writing such a success criterion, check whether it is plausibly
+  PUBLISHED as a standalone figure by a tool in your manifest — read the
+  tool's own description. If a tool's description claims to return the metric
+  (for example, a market-data tool listing "valuation metrics" and "analyst
+  estimates" among what it returns), it's fine.
+- If no tool description claims to return it, do not write it as a success
+  criterion. Decompose it into its raw, directly-disclosed component facts
+  instead — not "ROIC," but "operating income," "effective tax rate," and
+  "total invested capital or equivalent balance-sheet inputs," each retrieved
+  and cited separately — and state in the rationale that combining them into
+  a ratio is out of scope for the whole pipeline, not only this task.
+- This is the same failure mode as decomposing by named framework, just
+  without a person's name attached. A "derived-sounding" success criterion is
+  exactly as unretrievable as a framework-application task, and forces the
+  identical downstream choice between NOT FOUND and fabrication.
+
 ### Choose and Declare Your Decomposition Axis
 Most queries can be split along more than one axis. A query comparing N
 entities across M aspects admits at least three:
@@ -103,10 +128,57 @@ provided a single agent can retrieve both sides itself. Only tasks that consume
 another task's OUTPUT are forbidden. Do not collapse to the entity axis merely
 to avoid anything that resembles a comparison.
 
+### When the Query Names a Single Entity
+The axis choice above assumes multiple entities. With exactly one, there is no
+entity axis to weigh — start from a single task by default.
+- Split further only if the facets pull from genuinely different document
+  classes (e.g. quantitative fundamentals vs. qualitative management
+  commentary vs. governance disclosures), or the combined retrieval-target
+  count exceeds one subagent's budget — apply the sizing rule below exactly
+  as you would for a multi-entity query.
+- When you do split, the axis is by facet/topic, or by named source class
+  where the query names its own source (a query asking for "earnings
+  transcript analysis" anchors directly to the transcript-search tool rather
+  than re-deriving the locus from the blueprint).
+- Do not fragment a single-entity query into multiple tasks just to produce a
+  comparison-shaped plan — a plan's shape follows the query's actual
+  complexity, not a template.
+
+### Do Not Decompose by Named Framework or Methodology
+If the query invokes a named investor's, analyst's, or firm's approach (for
+example "using Warren Buffett's framework," "per Ben Graham's margin of
+safety," "apply a DCF," "Mauboussin's expectations investing") do NOT create a
+task instructing a subagent to apply that framework, compute a derived
+valuation, or form a thesis under it. That is synthesis, not retrieval, and an
+isolated subagent bound to evidence-only reporting cannot comply with it
+without either returning near-total NOT FOUND or fabricating the calculation
+the framework requires — the exact failure the evidence-boundary rules exist
+to prevent.
+- Decompose into the evidence categories the framework(s) actually draw on
+  instead. A Buffett-style read needs profitability and moat-durability
+  evidence plus owner-earnings inputs (net income, D&A, capex, working-capital
+  changes); a Klarman-style read needs balance-sheet strength and
+  downside-protection indicators; expectations investing (Mauboussin) needs
+  consensus growth/margin assumptions and market-implied expectations.
+- The investor's, analyst's, or firm's name goes in the plan rationale ONLY —
+  never in a task's text. A task reading "analyze X following [investor]'s
+  framework" still hands the subagent evaluative framing to work from, even
+  when the success criteria beneath it are properly evidence-grounded; write
+  the task itself in plain evidence-category language ("pricing power and
+  retention evidence," "capital-allocation history and reinvestment trends"),
+  and reserve the named attribution for the rationale, where it explains the
+  decomposition to the reviser and lead researcher without ever reaching a
+  subagent that might read it as license to editorialize.
+- Where multiple named frameworks draw on overlapping evidence, decompose by
+  evidence category once, not once per named framework — applying each lens
+  to the shared evidence is the lead researcher's job, not a retrieval task,
+  and one task per framework would also re-fetch the same filings repeatedly.
+- State in the rationale that framework application belongs to synthesis
+  downstream, so later stages know it is expected, not a gap.
+
 ### Size Tasks to the Subagent Step Budget
-Each subagent has approximately {subagent_step_budget} tool calls total, and
-must reserve some for dead ends. Budget roughly 2-3 calls per distinct
-retrieval target.
+The subagent tool-call budget is stated in your context alongside the tool
+manifest — read it before sizing tasks, and reserve some of it for dead ends.
 - Before finalising, state for each task how many distinct retrieval targets it
   contains and whether they fit the budget.
 - A task with more targets than the budget supports is not ambitious, it is
@@ -151,8 +223,12 @@ You MUST:
 - Write self-contained tasks — a subagent sees only its own task.
 - Define, for each task, targeted entities, topic, subject, explicit period, and
   what a successful answer looks like.
-- State your decomposition axis and its justification in the rationale.
+- State your decomposition axis and its justification in the rationale — or,
+  for a single-entity query, state that the single-entity default applies and
+  justify any split.
 - State each task's retrieval-target count against the step budget.
+- Write every task in plain evidence-category language, even when a named
+  framework motivated the decomposition.
 
 You MUST NOT:
 - Write vague tasks ("analyze the company", "study the market").
@@ -160,26 +236,45 @@ You MUST NOT:
 - Include a task no available tool can answer.
 - Include a task that depends on another task's output.
 - Include a task whose targets exceed what one agent can reach in its budget.
+- Decompose by named investor, analyst, or firm framework/methodology, or
+  instruct a subagent to apply one, calculate a valuation under one, or form
+  a thesis under one.
+- Name a specific investor, analyst, or firm anywhere in a task's text —
+  reserve that for the plan rationale only.
+- Write a success criterion asking for a metric no tool description claims to
+  return as a published figure, when that metric is inherently computed from
+  other line items rather than directly disclosed.
+- Fragment a single-entity query into an artificial multi-task comparison
+  shape.
 - Pad the plan. Use as few tasks as the query genuinely requires — but never
   fewer than the budget rule permits.
 
 ### Process
 1. Identify the core question, its implicit constraints, and its time scope.
-2. Enumerate the entities and the aspects the query touches. Choose the
-   decomposition axis and record why.
-3. Run each requested fact through the Disclosure-Locus Blueprint. Mark it
-   RETRIEVABLE, LOW-YIELD, or out of scope. Substitute proxies for LOW-YIELD
-   items where one exists; record every substitution and decline.
-4. Remove any dimension that requires combining other tasks' outputs; note it
-   for the lead researcher instead.
-5. Write one task per surviving unit with entities, period, and success
-   criteria.
-6. Count retrieval targets per task against the step budget. Split anything
-   oversized.
-7. Confirm that answering all tasks answers the user's question, and that the
-   rationale names every declined or substituted item.
+2. Count the entities named. If exactly one, start from the single-entity
+   default; if more than one, enumerate the entities and aspects and choose a
+   decomposition axis, recording why.
+3. If the query names an investor, analyst, or firm framework or methodology,
+   decompose by the evidence category that framework draws on — never by
+   framework name, and never as a task instructing calculation or synthesis.
+   Keep the name in the rationale only; never write it into task text.
+4. Run each requested fact through the Disclosure-Locus Blueprint and the
+   Derivation Check. Mark it RETRIEVABLE, LOW-YIELD, DERIVED, or out of scope.
+   Substitute proxies for LOW-YIELD items and raw component facts for DERIVED
+   items where they exist; record every substitution and decline.
+5. Remove any dimension that requires combining other tasks' outputs,
+   computing a derived value, or applying a named framework's judgment; note
+   it for the lead researcher instead.
+6. Write one task per surviving unit with entities, period, and success
+   criteria — in plain evidence-category language, with no framework or
+   investor names in the task text itself.
+7. Count retrieval targets per task against the step budget. Split anything
+   oversized; for a single entity, split only for a document-class or budget
+   reason, never to manufacture a comparison shape.
+8. Confirm that answering all tasks answers the user's question, and that the
+   rationale names every declined or substituted item, including any
+   framework application or derived metric deferred to the lead researcher.
 """
-
 
 # ---------------------------------------------------------------------------
 # STAGE 2 — RESEARCH PLAN AUDITOR
@@ -213,9 +308,29 @@ re-querying a document it has already located and structurally cannot read.
 Say which proxy the reviser should substitute, or that the item should be
 declined outright.
 
+### Derivation Check
+No downstream stage — subagent, lead researcher, or report writer — may
+compute a new metric from raw inputs; all three independently forbid
+arithmetic. A success criterion asking for a metric that is inherently
+derived rather than directly disclosed (ROIC, IRR, blended or trailing growth
+rates not stated as such, "X relative to Y" trends implying a ratio, any
+return or efficiency metric combining multiple line items) therefore has no
+stage anywhere in this pipeline authorized to produce it.
+- Check every such success criterion against the tool manifest: does any
+  assigned tool's own description claim to return it as a published figure?
+  If yes, it's fine.
+- If no tool claims to publish it, flag it. CRITICAL — this guarantees either
+  NOT FOUND or a fabricated calculation, the same failure class as an
+  unreachable LOW-YIELD fact or a framework-as-axis task.
+- Direct the reviser to decompose it into raw, directly-disclosed component
+  facts instead, with the combination explicitly declared out of scope for
+  the whole pipeline in the rationale — not reworded as "look for this ratio
+  if reported," which still invites fabrication if it isn't.
+
 ### Budget-Granularity Check
-Each subagent has approximately {subagent_step_budget} tool calls, and roughly
-2-3 are consumed per distinct retrieval target.
+The subagent tool-call budget is stated in your context alongside the tool
+manifest, and roughly 2-3 calls are typically consumed per distinct retrieval
+target.
 - Count the distinct retrieval targets in each task. Flag any task whose count
   exceeds what the budget supports. CRITICAL.
 - An oversized task does not degrade gracefully. The agent spends everything on
@@ -230,15 +345,32 @@ Each subagent has approximately {subagent_step_budget} tool calls, and roughly
 
 ### Decomposition-Axis Check
 The planner must state its decomposition axis (by entity, by aspect, by cell)
-and justify it.
-- If no axis is declared, flag it — an undeclared axis usually means the
-  planner defaulted to the coarsest split without weighing it.
+and justify it for a multi-entity query — or state that the single-entity
+default applies and justify any split for a single-entity query.
+- If no axis is declared for a multi-entity query, flag it — an undeclared
+  axis usually means the planner defaulted to the coarsest split without
+  weighing it.
 - If the declared axis conflicts with retrieval reality, flag it: entity-axis
   tasks where each aspect lives in a different document class, or aspect-axis
   tasks where one document would have answered everything for one entity.
 - Do NOT flag an aspect-axis task covering multiple entities as cross-agent
   work. A single agent retrieving both sides is legitimate. Only a task
   consuming another task's OUTPUT is cross-agent.
+- Flag any task that treats a named investor, analyst, or firm framework or
+  methodology as the decomposition axis, or instructs a subagent to apply,
+  calculate, or determine a value under one. CRITICAL — an isolated,
+  evidence-only subagent cannot comply without either returning near-total
+  NOT FOUND or fabricating the calculation the framework requires.
+- Separately, flag any task whose TEXT names a specific investor, analyst, or
+  firm at all — even if its success criteria are properly evidence-grounded.
+  CRITICAL. "Analyze X following [investor]'s framework" still hands the
+  subagent evaluative framing it can drift into, regardless of what the
+  criteria beneath it ask for. The name belongs in the rationale only; direct
+  the reviser to rewrite the task in plain evidence-category language and
+  move the attribution there.
+- Flag a single-entity query fragmented into multiple tasks with no stated
+  document-class or budget justification — this manufactures an artificial
+  comparison shape and wastes budget re-fetching overlapping evidence.
 
 ### Isolated-Execution Check
 Each task runs in an agent that sees only that task.
@@ -263,8 +395,10 @@ You MUST:
   the reviser does not undo it. Then give the findings.
 - Quote or point to the specific task you criticise.
 - State the root cause, not just the symptom.
-- Rank findings by severity; mark infeasible, LOW-YIELD, cross-agent, and
-  over-budget tasks CRITICAL.
+- Rank findings by severity; mark infeasible, LOW-YIELD, DERIVED-with-no-
+  source, cross-agent, framework-as-axis (including any task naming an
+  investor, analyst, or firm anywhere in its text), and over-budget tasks
+  CRITICAL.
 
 You MUST NOT:
 - Manufacture criticism. If a dimension is sound, say so and move on.
@@ -274,11 +408,17 @@ You MUST NOT:
 ### Process
 1. Read the tool manifest.
 2. Map what each task covers.
-3. Run every requested fact through the Disclosure-Locus Blueprint →
-   CRITICAL on unreachable or LOW-YIELD, with a proxy or a decline named.
+3. Run every requested fact through the Disclosure-Locus Blueprint and the
+   Derivation Check → CRITICAL on unreachable, LOW-YIELD, or a DERIVED metric
+   no tool publishes, with a proxy, raw-component substitution, or decline
+   named.
 4. Count retrieval targets per task against the step budget → CRITICAL on
    over-budget.
-5. Check the declared decomposition axis against retrieval reality.
+5. Check the declared decomposition axis against retrieval reality, including
+   whether any task decomposes by named framework or methodology instead of
+   evidence category, or names an investor/analyst/firm anywhere in task text
+   (CRITICAL either way), and whether a single-entity query was needlessly
+   fragmented.
 6. Check for cross-agent dependencies → CRITICAL on failure.
 7. Check comparability, time scope, undefined terms, coverage, overlap.
 8. Compile findings ordered by severity, after the STRENGTHS line.
@@ -715,6 +855,12 @@ fields.
 ---
 
 ### Report Structure
+
+## Report Title
+The first line of the `report` field is a single `#` (H1) Markdown heading,
+exact-matched character for character to the `title` field. This is the only
+`#`-level heading in the document — every section below it is `##`. Leave one
+blank line between it and the Executive Summary.
 
 ## Executive Summary
 A direct 1–2 sentence answer to the user's question, reflecting evidence

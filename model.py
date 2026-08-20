@@ -132,12 +132,13 @@ class ResearchReportAudit(ResearchModel):
 class FinancialMarketResearchAssistantResponse:
     base_llm: str
     audit_llm: str
+    max_loops: str
     research_query: str
-    research_tasks: ResearchTasks
-    research_planner_messages: list[BaseMessage]
-    research_plan_auditor_messages: list[BaseMessage]
+    research_tasks: str
+    planner_messages: list[BaseMessage]
+    planauditor_messages: list[BaseMessage]
     subagent_messages: list[list[BaseMessage]]
     synthesized_research: str
-    report_writer_messages: list[BaseMessage]
-    report_auditor_messages: list[BaseMessage]
-    research_report: ResearchReport
+    writer_messages: list[BaseMessage]
+    writerauditor_messages: list[BaseMessage]
+    research_report: str

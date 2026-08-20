@@ -1,0 +1,55 @@
+Coverage for NVIDIA is severely restricted, with annual revenue figures successfully retrieved for only one of the requested years (FY 2025), while NVIDIA revenue for FY 2018 through FY 2024 was NOT FOUND. Coverage for AMD is complete from FY 2018 through FY 2025.
+
+### NVIDIA Annual Revenue (FY 2018 – FY 2025)
+
+- **FY 2018:** NOT FOUND
+- **FY 2019:** NOT FOUND
+- **FY 2020:** NOT FOUND
+- **FY 2021:** NOT FOUND
+- **FY 2022:** NOT FOUND
+- **FY 2023:** NOT FOUND
+- **FY 2024:** NOT FOUND
+- **FY 2025:** $130.5 billion [src: http://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2025]
+
+### AMD Annual Revenue (FY 2018 – FY 2025)
+
+- **FY 2018:** $6,475 million ($6.48 billion) for the fiscal year ended December 29, 2018 [src: https://www.sec.gov/Archives/edgar/data/2488/000000248819000011/amd-12292018x10k.htm]
+- **FY 2019:** $6,731 million ($6.73 billion) [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm]
+- **FY 2020:** $9,763 million ($9.76 billion) [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm]
+- **FY 2021:** $16,434 million ($16.43 billion) for the fiscal year ended December 25, 2021 [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm]
+- **FY 2022:** $23,601 million ($23.60 billion) for the fiscal year ended December 31, 2022 [src: https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm]
+- **FY 2023:** $22,680 million ($22.68 billion) for the fiscal year ended December 30, 2023 [src: https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm]
+- **FY 2024:** $25,785 million ($25.79 billion) for the fiscal year ended December 28, 2024 [src: https://ir.amd.com/news-events/press-releases/detail/1236/amd-reports-fourth-quarter-and-full-year-2024-financial-results]
+- **FY 2025:** $34,614 million ($34.6 billion) for the fiscal year ended December 27, 2025 [src: https://ir.amd.com/news-events/press-releases/detail/1276/amd-reports-fourth-quarter-and-full-year-2025-financial-results]
+
+| Fiscal Year | AMD Reported Annual Revenue | Source Citation |
+| :--- | :--- | :--- |
+| **FY 2018** | $6,475 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248819000011/amd-12292018x10k.htm] |
+| **FY 2019** | $6,731 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm] |
+| **FY 2020** | $9,763 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.jp] |
+| **FY 2021** | $16,434 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm] |
+| **FY 2022** | $23,601 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm] |
+| **FY 2023** | $22,680 million | [src: https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm] |
+| **FY 2024** | $25,785 million | [src: https://ir.amd.com/news-events/press-releases/detail/1236/amd-reports-fourth-quarter-and-full-year-2024-financial-results] |
+| **FY 2025** | $34,614 million | [src: https://ir.amd.com/news-events/press-releases/detail/1276/amd-reports-fourth-quarter-and-full-year-2025-financial-results] |
+
+---
+
+### Evidence Gaps
+
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2018 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2019 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2020 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2021 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2022 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2023 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+- NOT FOUND :: Obtain reported annual revenue for NVIDIA for FY 2024 :: tried: `sec_filing_search` for NVIDIA 10-K filings; `company_ir_search` for NVIDIA annual results.
+
+### Conflicts
+
+- None reported.
+
+---
+
+### Lead Research Synthesist Interpretation
+The NVIDIA data is heavily incomplete, restricting any multi-year comparative analysis for NVIDIA on its own or against AMD within the requested timeframe. Closing the gaps for NVIDIA requires targeted searches across individual historical NVIDIA Form 10-K filings or older investor relations archives for FY 2018 through FY 2024.

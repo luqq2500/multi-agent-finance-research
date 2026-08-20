@@ -65,11 +65,19 @@ def main():
         validate=NumberValidator(float_allowed=False),
     ).execute()
 
-    base_model = models[select_base_model]()
-    audit_model = models[select_audit_model]()
-    max_loop = int(select_plan_reflect_max_loop)
+    select_subagent_max_loop = inquirer.number(
+        message="Enter subagent max loop:",
+        default=None,
+        min_allowed=1,
+        max_allowed=100,
+        validate=NumberValidator(float_allowed=False),
+    ).execute()
 
     try:
+        base_model = models[select_base_model]()
+        audit_model = models[select_audit_model]()
+        max_plan_reflect_loop = int(select_plan_reflect_max_loop)
+        max_subagent_loop = int(select_subagent_max_loop)
         base_model.invoke(input="ping")
         audit_model.invoke(input="ping")
     except Exception as e:
@@ -79,20 +87,20 @@ def main():
         base_llm=base_model,
         audit_llm=audit_model,
         tools=research_tools,
-        plan_research_max_loop=max_loop,
-        write_report_max_loop=max_loop
+        max_planner_loop=max_plan_reflect_loop,
+        max_agents_loop=max_subagent_loop,
+        max_writer_loop=max_plan_reflect_loop
     )
 
     while True:
         start_time = time.time()
-        user_prompt = input(f"Research financial markets ('quit' to exit): ")
+        user_prompt = input(f"\nResearch financial markets ('quit' to exit): ")
         if user_prompt.lower().strip() == 'quit':
             break
         response: FinancialMarketResearchAssistantResponse = assistant.run(user_prompt)
         end_time = time.time()
 
-        research_report: ResearchReport = response.research_report
-        print(f'Response: \n{research_report.report}')
+        print(f'Response: \n{response.research_report}')
 
         duration = end_time - start_time
         print(f'Response time: {duration} seconds')

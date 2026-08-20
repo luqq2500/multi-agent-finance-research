@@ -1,0 +1,62 @@
+### Response to Audit
+- Restored the missing source (https://finance.yahoo.com/news/tech-companies-spending-unprecedented-700-021345857.html) to the References list and attributed the claim regarding 1,000 times higher computation power to it.
+- Removed reference [9] from the NVIDIA statement in Analytical Interpretation and Synthesis.
+- Updated reference [7] author/title format to use Author not stated.
+
+## Executive Summary
+The available evidence reveals distinct approaches between NVIDIA and AMD regarding AI infrastructure spending and capital allocation strategies. NVIDIA emphasizes large-scale macroeconomic forecasting and hyper-growth market sizing linked to its Blackwell and Rubin architectures [1], whereas AMD reports concrete multi-year financial results alongside targeted strategic divestments and R&D scaling for its Instinct MI300 and MI350 accelerator series [3, 4, 5, 6]. Granular, itemized capital expenditure (PP&E) and exact R&D dollar figures from regulatory 10-K filings for both companies were not returned in the filing snippets.
+
+* NVIDIA management highlights a projected $3 trillion to $4 trillion global AI infrastructure opportunity over the next five years, driven by hyperscaler demand and accelerated AI computing [1, 2].
+* NVIDIA's data center revenue reached roughly $41 billion for the quarter ending July 27, with top customers accounting for about 40% of segment revenue [2].
+* AMD reported FY 2024 revenue of $25.8 billion with a Non-GAAP operating income of $6.1 billion, followed by FY 2025 revenue of $34.6 billion and a Non-GAAP operating income of $3.7 billion [3, 5].
+* AMD announced an agreement to divest the ZT Systems data center infrastructure manufacturing business to Sanmina for $3 billion (inclusive of a contingent payment of up to $450 million) while retaining rack-scale AI design expertise [7].
+
+## NVIDIA Strategy and Market Outlook
+NVIDIA's strategy centers on forecasting macro-level demand and aligning its product generations with massive data center investments by cloud providers. Management projects that global data center capital expenditures will rise toward $1 trillion by 2027 to support accelerated computing transitions that require 1,000 times higher computation power [2, 8, 10]. Furthermore, NVIDIA forecasts a $3 trillion to $4 trillion total AI infrastructure market over the next five years, anchored by the introduction of the Blackwell and Rubin architectures [1]. Hyperscalers continue to drive significant top-line figures, with NVIDIA's data center revenue reaching approximately $41 billion for the quarter ending July 27, during which top customers represented roughly 40% of the segment's revenue [2].
+
+## AMD Financial Performance and Capital Allocation
+AMD's financial and capital allocation strategy balances revenue growth with targeted investments in product engineering and operating expenses. Operating expenses increased significantly to support R&D and go-to-market strategies tailored for data center and AI opportunities [6].
+
+* **FY 2024 Revenue:** $25.8 billion [3]
+* **FY 2024 Non-GAAP Operating Income:** $6.1 billion [3]
+* **FY 2025 Revenue:** $34.6 billion [5]
+* **FY 2025 Non-GAAP Operating Income:** $3.7 billion [5]
+
+To support data center expansion, AMD pursued a steep ramp of the AMD Instinct MI350 series accelerators following prior deployment of the MI300 series [6]. Concurrently, AMD executed a major capital allocation shift by agreeing to divest the ZT Systems manufacturing business to Sanmina for $3 billion (including a contingent payment of up to $450 million) [7]. Under this agreement, AMD retains ZT Systems' rack-scale AI solutions design and customer enablement expertise [7].
+
+## Evidence Gaps and Data Limitations
+The available evidence is constrained by several specific data gaps:
+
+* NOT FOUND :: NVIDIA capital expenditure and R&D figures for FY2024 and FY2025 from regulatory filings :: tried: `sec_filing_search` with query 'capital expenditures property plant equipment research and development FY2024 FY2025'; `sec_filing_search` with query 'Consolidated Statements of Income Cash Flows property plant and equipment research and development'.
+* NOT FOUND :: Direct, granular figures for official NVIDIA data center capex capital allocation in official company IR releases :: tried: `company_ir_search` with query 'AI investment capex strategy data center'.
+* NOT FOUND :: Specific itemized figures for capital expenditures (CapEx) and Research & Development (R&D) extracted directly from the full FY2024/FY2025 AMD SEC 10-K tables via tool results :: tried: `sec_filing_search` with query 'capital expenditures property plant equipment research and development'.
+
+These omissions prevent a direct, line-item comparative analysis of physical property, plant, and equipment (PP&E) spending between the two firms.
+
+## Analytical Interpretation and Synthesis
+Based on the supplied evidence, the two companies exhibit divergent structural frameworks in managing their AI-driven expansion:
+
+* **NVIDIA** leans heavily into macro-level demand forecasting, leveraging upcoming product lifecycles like Blackwell and Rubin to capture multi-trillion-dollar infrastructure buildouts by hyperscalers [1].
+* **AMD** implements a capital-light manufacturing posture by divesting heavy physical factory assets (such as the ZT Systems manufacturing unit to Sanmina) while preserving internal rack-scale design talent [7, 9]. This strategy minimizes direct manufacturing capital expenditures on heavy factory assets while scaling R&D for accelerators such as the Instinct MI300 and MI350 series [6, 9].
+
+## References
+
+[1] NVIDIA Forecasts $3T-$4T AI Market Driving Next Wave of Infrastructure — Data Center Frontier — https://www.datacenterfrontier.com/machine-learning/article/55315014/nvidia-forecasts-34-trillion-ai-market-driving-next-wave-of-infrastructure
+
+[2] Big tech investment powers NVIDIA results, but Wall Street says inevitable slowdown looms — Yahoo Finance — https://finance.yahoo.com/news/big-tech-investment-powers-nvidia-results-but-wall-street-says-inevitable-slowdown-looms-193300481.html
+
+[3] AMD Reports Fourth Quarter and Full Year 2024 Financial Results — Advanced Micro Devices, Inc. — https://ir.amd.com/news-events/press-releases/detail/1236/amd-reports-fourth-quarter-and-full-year-2024-financial-results
+
+[4] AMD Q2 2025 Earnings Call Transcript — Yahoo Finance — https://finance.yahoo.com/quote/AMD/earnings/AMD-Q2-2025-earnings_call-343098.html
+
+[5] AMD Reports Fourth Quarter and Full Year 2025 Financial Results — Advanced Micro Devices, Inc. — https://ir.amd.com/news-events/press-releases/detail/1276/amd-reports-fourth-quarter-and-full-year-2025-financial-results
+
+[6] AMD Reports Second Quarter 2025 Financial Results — Advanced Micro Devices, Inc. — https://ir.amd.com/news-events/press-releases/detail/1257/amd-reports-second-quarter-2025-financial-results
+
+[7] Title not supplied — Author not stated — https://ir.amd.com/financial-information/sec-filings/content/0001193125-25-122121/0001193125-25-122121.pdf
+
+[8] Nvidia looks like a genius buy — Yahoo Finance — https://finance.yahoo.com/markets/stocks/articles/nvidia-looks-genius-buy-1-163300293.html
+
+[9] AMD earnings call signals powerful AI-driven shift — The Globe and Mail — https://www.theglobeandmail.com/investing/markets/stocks/AMD/pressreleases/1790550/amd-earnings-call-signals-powerful-ai-driven-shift
+
+[10] Title not supplied — Author not stated — https://finance.yahoo.com/news/tech-companies-spending-unprecedented-700-021345857.html

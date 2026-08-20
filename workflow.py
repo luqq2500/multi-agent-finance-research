@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 from langchain_core.language_models import BaseChatModel
@@ -11,28 +10,29 @@ from model import FinancialMarketResearchAssistantResponse, ResearchTasks, Resea
 
 
 class FinancialMarketResearchAssistant:
-    def __init__(self, base_llm: BaseChatModel, audit_llm: BaseChatModel | None, tools: list[BaseTool], plan_research_max_loop: int=2, max_agents: int=50, write_report_max_loop: int=2):
-        self.research_query = None
+    def __init__(self, base_llm: BaseChatModel, audit_llm: BaseChatModel | None, tools: list[BaseTool],
+                 max_planner_loop: int=2, max_agents_loop: int=20, max_writer_loop: int=2):
         self.base_llm = base_llm
         self.audit_llm = audit_llm if audit_llm else base_llm
         self.tool_map = {tool.name: tool for tool in tools} if tools else None
         self.available_tool_descriptions = self._get_available_tool_system_instruction()
-        self.plan_research_max_loop = plan_research_max_loop
-        self.write_report_max_loop = write_report_max_loop
-        self.max_agents = max_agents
+        self.max_planner_loop = max_planner_loop
+        self.max_writer_loop = max_writer_loop
+        self.max_agent_loop = max_agents_loop
         self.session_messages: list[BaseMessage] = []
+        self.research_query = None
 
     def run(self, research_query: str) -> FinancialMarketResearchAssistantResponse:
         self.research_query = research_query
 
-        tasks, planner_msg, plan_auditor_msg = self.plan_research_task()
+        research_tasks, planner_msg, plan_auditor_msg = self.plan_research_task(self.research_query)
 
         subagent_messages: list[list[BaseMessage]] = []
         subagent_contexts: list[str] = []
-        for task in tasks.get_list_of_research_task():
+        for task in research_tasks.get_list_of_research_task():
             agent_tools = [self.tool_map[tool_name] for tool_name in task.get_list_of_tools() if tool_name in self.tool_map]
 
-            subagent = SubAgent(llm=self.base_llm, tools=agent_tools)
+            subagent = SubAgent(llm=self.base_llm, tools=agent_tools, max_loop=self.max_agent_loop)
 
             response, messages = subagent.run(initial_messages=[
                 SystemMessage(content=SUBAGENT_RESEARCHER),
@@ -47,10 +47,13 @@ class FinancialMarketResearchAssistant:
         synthesized_response: AIMessage = self.base_llm.invoke([
             SystemMessage(content=RESEARCH_SYNTHESIZER),
             HumanMessage(content=f"""
-                    **Research Query**
+                    ## Research Query
                     {self.research_query}
                     
-                    **Research Findings**
+                    ## Research Tasks
+                    {research_tasks.get_message()}
+                    
+                    ## Research Findings
                     {subagent_contexts_text}
                     """)
         ])
@@ -61,30 +64,31 @@ class FinancialMarketResearchAssistant:
         return FinancialMarketResearchAssistantResponse(
             base_llm=self.get_chat_model_id(self.base_llm),
             audit_llm=self.get_chat_model_id(self.audit_llm),
+            max_loops=f"# Max Loops\nPlanner: {self.max_planner_loop}\nSubagent: {self.max_agent_loop}\nWriter: {self.max_writer_loop}",
             research_query=self.research_query,
-            research_tasks=tasks,
-            research_planner_messages=planner_msg,
-            research_plan_auditor_messages=plan_auditor_msg,
+            research_tasks="\n\n".join(str(task) for task in research_tasks.get_list_of_research_task()),
+            planner_messages=planner_msg,
+            planauditor_messages=plan_auditor_msg,
             subagent_messages=subagent_messages,
             synthesized_research=synthesized_text,
-            report_writer_messages=writer_msg,
-            report_auditor_messages=report_auditor_msg,
-            research_report=research_report
+            writer_messages=writer_msg,
+            writerauditor_messages=report_auditor_msg,
+            research_report=research_report.report
         )
 
-    def plan_research_task(self):
+    def plan_research_task(self, research_query: str):
         planner = self.base_llm.with_structured_output(ResearchTasks)
         auditor = self.audit_llm.with_structured_output(ResearchTasksCritique)
 
         planner_msg: list[BaseMessage] = [
-            SystemMessage(content=RESEARCH_PLANNER + self._get_available_tool_system_instruction()),
-            HumanMessage(content=f"**Research Query**\n{self.research_query}")
+            SystemMessage(content=RESEARCH_PLANNER + self._get_available_tool_system_instruction() + self.get_subagents_loop_budget()),
+            HumanMessage(content=f"**Research Query**\n{research_query}")
         ]
         auditor_msg: list[BaseMessage] = [
-            SystemMessage(content=RESEARCH_PLAN_AUDITOR + self._get_available_tool_system_instruction())
+            SystemMessage(content=RESEARCH_PLAN_AUDITOR + self._get_available_tool_system_instruction() + self.get_subagents_loop_budget())
         ]
 
-        for loop in range(self.plan_research_max_loop):
+        for loop in range(self.max_planner_loop):
             tasks: ResearchTasks = planner.invoke(planner_msg)
             planner_msg.append(AIMessage(content=tasks.get_message()))
             auditor_msg.append(HumanMessage(content=tasks.get_message()))
@@ -105,13 +109,13 @@ class FinancialMarketResearchAssistant:
 
         writer_msg: list[BaseMessage] = [
             SystemMessage(content=RESEARCH_REPORT_WRITER),
-            HumanMessage(content=f"\n**Research Query**\n{self.research_query}\n**Synthesized Research** \n{synthesized_research}"),
+            HumanMessage(content=f"**Research Query**\n{self.research_query}\n**Synthesized Research**\n{synthesized_research}"),
         ]
         auditor_msg: list[BaseMessage] = [
             SystemMessage(content=RESEARCH_REPORT_AUDITOR)
         ]
 
-        for loop in range(self.write_report_max_loop):
+        for loop in range(self.max_writer_loop):
             report = writer.invoke(writer_msg)
             writer_msg.append(AIMessage(content=report.get_message()))
             auditor_msg.append(HumanMessage(content=f"\n### Research Query\n{self.research_query}\n### Synthesized Research\n{synthesized_research}" + f"### Draft Report Under Review\n{report.get_message()}"))
@@ -149,6 +153,12 @@ class FinancialMarketResearchAssistant:
         
         {tool_descriptions_join}
         """
+
+    def get_subagents_loop_budget(self):
+        return f"""
+        **SUBAGENTS MAXIMUM LOOP BUDGET**: {self.max_agent_loop}
+        """
+
     @staticmethod
     def _get_current_date():
         return datetime.now().date().isoformat()
